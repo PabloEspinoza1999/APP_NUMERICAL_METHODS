@@ -6,7 +6,7 @@ def Index(request):
     return render(request, 'pages/index.html')
 
 def ShowNewtonRaphson(request):
-    return render(request, 'pages/ViewNewtonRaphson/Index.html')
+    return render(request, 'pages/ViewNewtonRaphson/index.html')
 
 def SaveNewtonRaphson(request):
     if request.method == 'POST':
