@@ -1,7 +1,10 @@
 from django.urls import path
-from . import views
+from .Controllers import NewtonController
 
 urlpatterns = [
-    path('', views.inicio, name='inicio'),
-    path('About',views.About,name='About'),
+    path('', NewtonController.Index, name='Index'),
+    path('ShowNewtonRaphson',NewtonController.ShowNewtonRaphson,name='ShowNewtonRaphson'),
+    path('SaveNewtonRaphson',NewtonController.SaveNewtonRaphson,name='SaveNewtonRaphson'),
+
+    # HERE ANOTHER URLS
 ]

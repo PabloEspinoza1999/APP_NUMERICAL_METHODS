@@ -8,7 +8,14 @@
     <title>{% block titulo %}{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+    <!-- Incluir SweetAlert2 CSS -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <!-- Incluir SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="{% static 'Charts/chartsNewtonR.js' %}"></script>
+    
+   
+   <style>
         body {
             font-family: Arial, sans-serif;
             color: #333;
@@ -102,6 +109,28 @@
             margin: 0;
             font-size: 14px;
         }
+          /* Estilos para la lista con scroll */
+      .lista-con-scroll {
+            list-style-type: none;
+            /* Eliminar viñetas de la lista */
+            padding: 0;
+            /* Eliminar relleno interno */
+            margin: 0;
+            /* Eliminar margen */
+            overflow-y: auto;
+            /* Agregar desplazamiento vertical */
+            height: 200px;
+            /* Altura máxima de la lista */
+            border: 1px solid #ccc;
+            /* Añadir borde para visualización */
+        }
+
+        .lista-con-scroll li {
+            padding: 8px 16px;
+            /* Añadir relleno a los elementos de la lista */
+            border-bottom: 1px solid #eee;
+            /* Añadir línea separadora entre elementos */
+        } 
     </style>
 </head>
 <body>
@@ -109,9 +138,11 @@
         <div class="sidebar">
             <h2><i class="fas fa-list icon"></i> Menú</h2>
             <ul>
-                <li><a href="#"><i class="fas fa-chart-bar icon"></i> Sistemas de Numeración</a></li>
-                <li><a href="#"><i class="fas fa-calculator icon"></i> Algoritmo de la Bisección</a></li>
-                <li><a href="#"><i class="fas fa-sync-alt icon"></i> Iteración del Punto Fijo</a></li>
+                <li><a href="{% url 'Index' %}"><i class="fas fa-chart-bar icon"></i> Dasbord</a></li>
+                <li><a href="{% url 'ShowNewtonRaphson' %}"><i class="fas fa-calculator icon"></i> Newton Raphson</a></li>
+                <li><a href="#"><i class="fas fa-sync-alt icon"></i> Secante</a></li>
+                <li><a href="#"><i class="fas fa-sync-alt icon"></i> Tabla Polinomios de Newton </a></li>
+                <li><a href="#"><i class="fas fa-sync-alt icon"></i> Lagrage </a></li>
                 <li><a href="#"><i class="fas fa-sign-out-alt icon"></i> Salir (Log out)</a></li>
             </ul>
         </div>
@@ -130,57 +161,48 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+
     <script>
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
-                datasets: [{
-                    label: 'Ventas',
-                    data: [12, 19, 3, 5, 2, 3, 10],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 99, 132, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            fontColor: '#333'
-                        }
-                    }],
-                    xAxes: [{
-                        ticks: {
-                            fontColor: '#333'
-                        }
-                    }]
-                },
-                legend: {
-                    labels: {
-                        fontColor: '#333'
-                    }
-                }
-            }
-        });
-    </script>
+
+ //const datos = JSON.parse('{{ ruta_punto_optimo | escapejs }}');
+    const dato = JSON.parse('{{ ultimo_valor | escapejs }}');
+    var calculator = Desmos.Calculator(document.getElementById('calculator'), {
+      expressionsCollapsed: true
+    });
+    var x_interseccion = dato;
+    calculator.setExpression({ id: 'graph1', latex: 'y = x - ' + x_interseccion });
+
+    // Actualiza la ecuación cuando se cambian los valores de m y b
+    function updateGraph() {
+      var m = parseFloat(document.getElementById('m').value);
+      var b = parseFloat(document.getElementById('b').value);
+      calculator.setExpression({ id: 'graph1', latex: 'y = ' + m + 'x + ' + b });
+    } 
+
+
+
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var lista = document.getElementById('miLista');
+    var alturaTotal = lista.scrollHeight;
+    var alturaMaxima = 200; // Puedes ajustar esto según tus necesidades
+
+    // Si la altura total excede la altura máxima, agregar un scrollbar
+    if (alturaTotal > alturaMaxima) {
+        lista.style.overflowY = 'auto'; // Habilitar el scrollbar vertical
+        lista.style.maxHeight = alturaMaxima + 'px'; // Establecer la altura máxima
+    }
+});
+
+</script>
 </body>
+<footer>
+
+    <!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</footer>
 </html>
