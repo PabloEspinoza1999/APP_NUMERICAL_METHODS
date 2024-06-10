@@ -16,7 +16,11 @@ def SaveNewtonRaphson(request):
         tasa_cambio_demanda_precio = float(request.POST.get('tasa_cambio_demanda_precio'))    
         try:
             ruta_punto_optimo = UNewton.newton_raphson_precio(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio)         
-            contexto = {'ruta_punto_optimo': ruta_punto_optimo}
+            ultimo_valor = ruta_punto_optimo[-1]
+            contexto = {
+                  'ruta_punto_optimo': ruta_punto_optimo,
+                  'ultimo_valor': ultimo_valor
+                  }
             return render(request, 'pages/ViewNewtonRaphson/index.html', contexto)
         except Exception as e:
             error_message = "Error: {}".format(str(e))

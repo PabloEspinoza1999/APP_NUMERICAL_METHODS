@@ -161,34 +161,27 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+
     <script>
 
- const datos = JSON.parse('{{ ruta_punto_optimo | escapejs }}');
+ //const datos = JSON.parse('{{ ruta_punto_optimo | escapejs }}');
+    const dato = JSON.parse('{{ ultimo_valor | escapejs }}');
+    var calculator = Desmos.Calculator(document.getElementById('calculator'), {
+      expressionsCollapsed: true
+    });
+    var x_interseccion = dato;
+    calculator.setExpression({ id: 'graph1', latex: 'y = x - ' + x_interseccion });
 
-  // Etiquetas (opcional)
-  const etiquetas = datos.map((_, index) => `Dato ${index + 1}`);
+    // Actualiza la ecuación cuando se cambian los valores de m y b
+    function updateGraph() {
+      var m = parseFloat(document.getElementById('m').value);
+      var b = parseFloat(document.getElementById('b').value);
+      calculator.setExpression({ id: 'graph1', latex: 'y = ' + m + 'x + ' + b });
+    } 
 
-  // Configuración del gráfico
-  const ctx = document.getElementById('myChart').getContext('2d');
-  const myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: etiquetas, // Si quieres etiquetas en el eje x
-      datasets: [{
-        label: 'Datos',
-        data: datos,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: false
-        }
-      }
-    }
-  });
+
+
 
   document.addEventListener("DOMContentLoaded", function() {
     var lista = document.getElementById('miLista');
