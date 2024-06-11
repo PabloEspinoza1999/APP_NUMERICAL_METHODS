@@ -6,7 +6,7 @@ Setup the environment:
 2. Copy the file `.env.example` to `.env` file name.
 3. Run `docker compose up -d` to start the app.
 4. Optionally run `pip install -r requirements.txt` command (require python +3.10)
-5. Open `http://127.0.0.1` in a browser.
+5. Open `http://127.0.0.1:8000` in a browser.
 
 ### Adding dependencies
 
