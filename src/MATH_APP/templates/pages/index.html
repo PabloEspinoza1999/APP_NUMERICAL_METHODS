@@ -4,16 +4,49 @@
 
 {% block contenido %}
 <div class="card">
-    <h1>Bienvenido!</h1>
-    <div class="btn-group">
-        <button class="btn btn-success"><i class="fas fa-plus icon"></i> Crear Nuevo proyecto</button>
-        <button class="btn btn-primary"><i class="fas fa-plus icon"></i> Evaluar Empresa</button>
-        <button class="btn btn-info"><i class="fas fa-eye icon"></i> Ver Reportes</button>
-    </div>
-    <p>Aquí va el contenido sobre sistemas de numeración.</p>
-    <div class="card chart">
-       <!--<canvas id="myChart"></canvas>---> 
-    </div>
+    <h1>Hola,</h1>
+    
+    <h2>Estás usando el sistema de generación de informes de clientes.</h2>
+    <br>
+
+    <p>En el menú izquierdo encontrarás las siguientes opciones:</p>
+    <ol>
+        <li>
+            <strong><a href="{% url 'ShowNewtonRaphson' %}">Retención de clientes con descuentos óptimos:</a></strong>
+            <p>
+                Este informe ejecuta un algoritmo basado en Newton Raphson para encontrar el descuento más óptimo para un producto
+                con el que pretendas retener clientes.
+            </p>
+        </li>
+        <li>
+            <strong><a href="{% url 'ShowSecante' %}">Tiempo óptimo de producción para la fabricación de productos:</a></strong>
+            <p>
+                Este informe permite obtener el mejor tiempo de producción en horas mediante el método de Secante, esto para optimizar el esfuerzo
+                en tiempo del personal disponible en tu organización.
+            </p>
+        </li>
+        <li>
+            <strong><a href="#">Proyección soporte al cliente:</a></strong>
+            <p>
+                Este informe muestra una proyección de casos abiertos y resueltos sobre solicitudes de clientes, además proyecta el tiempo promedio
+                en un lapzo para tomar decisiones sobre el personal que atiende a los clientes de una empresa, dicho informe ejecuta un algoritmo
+                basado en Polinomios de Newton. 
+            </p>
+        </li>
+        <li>
+            <strong><a href="#">Proyección de satisfacción al cliente:</a></strong>
+            <p>
+                Este informe calcula una proyección de satisfacción a cliente mediante un algoritmo basado en Lagrange, según el histórico de datos
+                que se proporcione realizará una proyeccioń en caso de que algún factor como los precios de un producto, tratamiento al cliente y demás se mantuviera.</s>.
+            </p>
+        </li>
+        <li>
+            <strong><a href="{% url 'UserManual' %}">Manual de usuario</a>: Guía de usuario final</strong>
+            <p>
+                Este apartado proporciona el acceso al manual de usuario que detalla cada una de las funcionalidades de este sistema.
+            </p>
+        </li>
+    </ol>
 </div>
 
 {% endblock %}      

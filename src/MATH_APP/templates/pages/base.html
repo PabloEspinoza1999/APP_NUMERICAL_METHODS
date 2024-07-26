@@ -25,11 +25,9 @@
         }
         .container {
             display: flex;
-            max-width: 1200px;
-            margin: 20px auto;
+            max-width: 95%;
             background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
             overflow: hidden;
         }
         .sidebar {
@@ -39,7 +37,7 @@
             color: #fff;
         }
         .sidebar h2 {
-            margin: 0 0 20px;
+            margin: 0 0 30px;
             font-size: 24px;
             border-bottom: 2px solid #fff;
             padding-bottom: 10px;
@@ -53,14 +51,16 @@
             margin-bottom: 10px;
         }
         .sidebar a {
-            color: #fff;
-            text-decoration: none;
             font-size: 18px;
             transition: color 0.3s;
             display: flex;
             align-items: center;
         }
-        .sidebar a:hover {
+        a {
+            color: #fff;
+            text-decoration: none;
+        }
+        a:hover {
             color: #f0f0f0;
         }
         .sidebar a .icon {
@@ -136,28 +136,39 @@
 <body>
     <div class="container">
         <div class="sidebar">
-            <h2><i class="fas fa-list icon"></i> Menú</h2>
+            <h2><i class="fas fa-list icon"></i> Menú de informes</h2>
+
+            
             <ul>
-                <li><a href="{% url 'Index' %}"><i class="fas fa-chart-bar icon"></i> Dasbord</a></li>
-                <li><a href="{% url 'ShowNewtonRaphson' %}"><i class="fas fa-calculator icon"></i> Newton Raphson</a></li>
-                <li><a href="{% url 'ShowSecante' %}"><i class="fas fa-calculator icon"></i> Secante</a></li>
-                <li><a href="#"><i class="fas fa-sync-alt icon"></i> Tabla Polinomios de Newton </a></li>
-                <li><a href="#"><i class="fas fa-sync-alt icon"></i> Lagrage </a></li>
-                <li><a href="{% url 'UserManual' %}"><i class="fas fa-sync-alt icon"></i> Manual de uso </a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt icon"></i> Salir (Log out)</a></li>
+                <li><a href="{% url 'Index' %}"><i class="fas fa-home icon"></i> Inicio</a></li>
+                <br>
+                <li>
+                    <a href="{% url 'ShowNewtonRaphson' %}"><i class="fas fa-user icon"></i> Retención de clientes con descuentos óptimos - Newton Raphson</a>
+                </li>
+                <li>
+                    <a href="{% url 'ShowSecante' %}"><i class="fas fa-clock icon"></i> Tiempo óptimo de producción para la fabricación de productos - Secante</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fas fa-headset icon"></i> Proyección soporte al cliente - Polinomios de Newton </a>
+                </li>
+                <li>
+                    <a href="#"><i class="fas fa-smile icon"></i> Proyección de satisfacción al cliente - Lagrange </a>
+                </li>
+                <br>
+                <li><a href="{% url 'UserManual' %}"><i class="fas fa-book icon"></i> Manual de usuario </a></li>
             </ul>
         </div>
         <div class="main-content">
             <div class="header">
-                <h1>Panel de Control</h1>
+                <h1>Generador de informes</h1>
             </div>
             <div class="content">
                 <div class="card">
-                    {% block contenido %}{% endblock %}           
+                    {% block contenido %}{% endblock %}        
                 </div>
             </div>
             <div class="footer">
-                <p>Panel de Control © 2024</p>
+                <p>Todos los derechos reservados © 2024 | UTN</p>
             </div>
         </div>
     </div>
@@ -166,44 +177,42 @@
 
     <script>
 
- //const datos = JSON.parse('{{ ruta_punto_optimo | escapejs }}');
-    const dato = JSON.parse('{{ ultimo_valor | escapejs }}');
-    var calculator = Desmos.Calculator(document.getElementById('calculator'), {
-      expressionsCollapsed: true
-    });
-    var x_interseccion = dato;
-    calculator.setExpression({ id: 'graph1', latex: 'y = x - ' + x_interseccion });
-
-    // Actualiza la ecuación cuando se cambian los valores de m y b
-    function updateGraph() {
-      var m = parseFloat(document.getElementById('m').value);
-      var b = parseFloat(document.getElementById('b').value);
-      calculator.setExpression({ id: 'graph1', latex: 'y = ' + m + 'x + ' + b });
-    } 
+        const dato = JSON.parse('{{ ultimo_valor | escapejs }}');
+        var calculator = Desmos.Calculator(document.getElementById('calculator'), {
+        expressionsCollapsed: true
+        });
+        var x_interseccion = dato;
+        calculator.setExpression({ id: 'graph1', latex: 'y = x - ' + x_interseccion });
 
 
+        // Actualiza la ecuación cuando se cambian los valores de m y b
+        function updateGraph() {
+        var m = parseFloat(document.getElementById('m').value);
+        var b = parseFloat(document.getElementById('b').value);
+        calculator.setExpression({ id: 'graph1', latex: 'y = ' + m + 'x + ' + b });
+        }
 
+        document.addEventListener("DOMContentLoaded", function() {
+            var lista = document.getElementById('miLista');
+            var alturaTotal = lista.scrollHeight;
+            var alturaMaxima = 200; // Puedes ajustar esto según tus necesidades
 
-  document.addEventListener("DOMContentLoaded", function() {
-    var lista = document.getElementById('miLista');
-    var alturaTotal = lista.scrollHeight;
-    var alturaMaxima = 200; // Puedes ajustar esto según tus necesidades
+            // Si la altura total excede la altura máxima, agregar un scrollbar
+            if (alturaTotal > alturaMaxima) {
+                lista.style.overflowY = 'auto'; // Habilitar el scrollbar vertical
+                lista.style.maxHeight = alturaMaxima + 'px'; // Establecer la altura máxima
+            }
+        });
 
-    // Si la altura total excede la altura máxima, agregar un scrollbar
-    if (alturaTotal > alturaMaxima) {
-        lista.style.overflowY = 'auto'; // Habilitar el scrollbar vertical
-        lista.style.maxHeight = alturaMaxima + 'px'; // Establecer la altura máxima
-    }
-});
-
-</script>
+    </script>
 </body>
-<footer>
 
-    <!-- Bootstrap JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </footer>
+s
 </html>
