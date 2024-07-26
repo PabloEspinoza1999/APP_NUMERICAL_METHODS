@@ -4,6 +4,8 @@ from django.http import JsonResponse
 
 def Index(request):
     return render(request, 'pages/index.html')
+def UserManual(request):
+    return render(request, 'pages/UserManual/Index.html')
 
 def ShowNewtonRaphson(request):
     return render(request, 'pages/ViewNewtonRaphson/index.html')

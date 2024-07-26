@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-e)7)o=)#k8q^zthsdtb4vkmd*j_@1f6j@3ox*n7t-jgvk3q$au
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+#ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -87,6 +87,9 @@ DATABASES = {
     }
 }
 
+# settings.py
+
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'app_numerical_methods-app']
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -125,11 +128,11 @@ USE_TZ = True
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+
+#ALLOWED_HOSTS = ['pabloesp.pythonanywhere.com']
 
 #STATIC_URL = 'static/'
 
