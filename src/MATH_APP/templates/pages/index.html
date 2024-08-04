@@ -12,7 +12,7 @@
     <p>En el menú izquierdo encontrarás las siguientes opciones:</p>
     <ol>
         <li>
-            <strong><a href="{% url 'ShowNewtonRaphson' %}">Retención de clientes con descuentos óptimos:</a></strong>
+            <strong><a href="{% url 'show_newton_raphson' %}">Retención de clientes con descuentos óptimos:</a></strong>
             <p>
                 Este informe ejecuta un algoritmo basado en Newton Raphson para encontrar el descuento más óptimo para un producto
                 con el que pretendas retener clientes.
@@ -34,7 +34,7 @@
             </p>
         </li>
         <li>
-            <strong><a href="#">Proyección de satisfacción al cliente:</a></strong>
+            <strong><a href="{% url 'langrange' %}">Proyección de satisfacción al cliente:</a></strong>
             <p>
                 Este informe calcula una proyección de satisfacción a cliente mediante un algoritmo basado en Lagrange, según el histórico de datos
                 que se proporcione realizará una proyeccioń en caso de que algún factor como los precios de un producto, tratamiento al cliente y demás se mantuviera.</s>.

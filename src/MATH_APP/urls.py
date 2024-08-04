@@ -12,6 +12,6 @@ urlpatterns = [
     path('save_newton_raphson',NewtonController.save_newton_raphson,name='save_newton_raphson'),
     path('ShowPolinomioNewton',PolinomioNewtonController.ShowPolinomioNewton,name='ShowPolinomioNewton'),
     path('SavePolinomioNewton',PolinomioNewtonController.SavePolinomioNewton,name='SavePolinomioNewton'),
-    path('DownloadChart',LagrangeController.DownloadChart,name='DownloadChart'),
-    path('Index',LagrangeController.Index,name='Index'),
+    path('DownloadChart',      LagrangeController.DownloadChart,name='DownloadChart'),
+    path('langrange',          LagrangeController.Index,name='langrange'),
 ]
