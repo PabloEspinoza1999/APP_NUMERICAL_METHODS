@@ -1,6 +1,32 @@
 {% extends "pages/base.html" %}
-{% block titulo %}Polinomios de Newton{% endblock %}
+{% block titulo %}Interpolación de Newton{% endblock %}
 
 {% block contenido %}
+    <h1>Interpolación de Newton</h1>
 
+    <!-- Formulario para ingresar datos -->
+    <form id="data-form">
+        <label for="t_points">Puntos de Tiempo (ej. 1,2,3):</label>
+        <input type="text" id="t_points" name="t_points" placeholder="1,2,3" required><br>
+
+        <label for="satisfaction_points">Puntos de Satisfacción (ej. 4.5,4.0,3.5):</label>
+        <input type="text" id="satisfaction_points" name="satisfaction_points" placeholder="4.5,4.0,3.5" required><br>
+
+        <button type="submit" class="btn btn-primary">Actualizar Gráfica</button>
+    </form>
+
+    <!-- Mostrar la imagen generada -->
+    <img id="graph-image" src="" alt="Gráfica de Interpolación de Newton" width="600px" height="300px">
+
+    <script>
+        document.getElementById('data-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const t_points = document.getElementById('t_points').value;
+            const satisfaction_points = document.getElementById('satisfaction_points').value;
+
+            const imageUrl = `{% url 'SavePolinomioNewton' %}?t_points=${t_points}&satisfaction_points=${satisfaction_points}`;
+            document.getElementById('graph-image').src = imageUrl;
+        });
+    </script>
 {% endblock %}

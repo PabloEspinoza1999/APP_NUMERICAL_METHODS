@@ -1,5 +1,5 @@
 from django.urls import path
-from .Controllers import NewtonController,SecanteController
+from .Controllers import NewtonController,SecanteController,PolinomioNewtonController,LagrangeController
 
 urlpatterns = [
     path('',                  NewtonController.Index,             name='Index'             ),
@@ -8,5 +8,10 @@ urlpatterns = [
     path('SaveNewtonRaphson', NewtonController.SaveNewtonRaphson, name='SaveNewtonRaphson' ),
     path('ShowSecante',       SecanteController.ShowSecante,      name='ShowSecante'       ),
     path('SaveSecante',       SecanteController.SaveSecante,      name='SaveSecante'       ),
-
+    path('show_newton_raphson',NewtonController.show_newton_raphson,name='show_newton_raphson'),
+    path('save_newton_raphson',NewtonController.save_newton_raphson,name='save_newton_raphson'),
+    path('ShowPolinomioNewton',PolinomioNewtonController.ShowPolinomioNewton,name='ShowPolinomioNewton'),
+    path('SavePolinomioNewton',PolinomioNewtonController.SavePolinomioNewton,name='SavePolinomioNewton'),
+    path('DownloadChart',LagrangeController.DownloadChart,name='DownloadChart'),
+    path('Index',LagrangeController.Index,name='Index'),
 ]
