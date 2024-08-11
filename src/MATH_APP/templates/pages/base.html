@@ -187,19 +187,20 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
         <script src="{% static 'Charts/chartsNewtonR.js' %}"></script>
         <script src="{% static 'js/datatables.js' %}"></script>
-<!-- Bootstrap JS -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        
+        <!-- Bootstrap JS -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
         <script>
             $(document).ready(function() {
                 $('#clientesTable').DataTable({
-                    paging: true,
+                    //paging: true,
                     searching: true,
                     ordering: true,
                     info: true,
                     lengthChange: true,
                     pageLength: 5,  // Configure to show 5 records per page
-                    dom: 'Bfrtip',
+                    dom: 'Bfrip',
                     buttons: ['copy', 'excel', 'csv', 'pdf', 'print'],
                     scrollX: true
                 });
@@ -240,6 +241,6 @@
             modal.find('#editNombreCliente' + id).val(button.data('nombre'));
         });
     </script>
-    </footer>
+</footer>
 </body>
 </html>
