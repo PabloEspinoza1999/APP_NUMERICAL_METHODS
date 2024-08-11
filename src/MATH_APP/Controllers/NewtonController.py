@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from ..Utils import UNewton ,UNewtonR
+from ..Data.Customer import CustomerData
 from django.http import JsonResponse
 
 def Index(request):
@@ -34,7 +35,9 @@ def SaveNewtonRaphson(request):
 #NEW NEWTON RAP
 
 def show_newton_raphson(request):
-    return render(request, 'pages/ViewNewtonRaphson/show_newton_raphson.html')
+      customer_data = CustomerData()
+      lista_cliente = customer_data.get_all_customers()
+      return render(request, 'pages/ViewNewtonRaphson/show_newton_raphson.html', {'clientes': lista_cliente})
 
 def save_newton_raphson(request):
     if request.method == 'POST':

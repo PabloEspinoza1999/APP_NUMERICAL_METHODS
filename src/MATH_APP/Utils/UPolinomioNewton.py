@@ -17,18 +17,27 @@ def newton_coefficients(t_points, satisfaction_points):
 def newton_interpolation(t, t_points, coeffs):
     n = len(t_points)
     result = coeffs[-1]
+    iterations = [(n - 1, result)]
     for i in range(n - 2, -1, -1):
         result = result * (t - t_points[i]) + coeffs[i]
-    return result
+        iterations.append((i, result))
+    return result, iterations
 
-# Generar la imagen de la gráfica y devolverla como respuesta HTTP
+# Generar la imagen de la gráfica y devolverla junto con las iteraciones
 def get_plot_image(t_points, satisfaction_points):
     # Obtener los coeficientes del polinomio de Newton
     coeffs = newton_coefficients(t_points, satisfaction_points)
 
     # Puntos para la gráfica
     t_values = np.linspace(min(t_points), max(t_points), 100)
-    satisfaction_values = [newton_interpolation(t, t_points, coeffs) for t in t_values]
+    satisfaction_values = []
+    all_iterations = []
+
+    # Evaluar el polinomio y guardar las iteraciones
+    for t in t_values:
+        satisfaction, iterations = newton_interpolation(t, t_points, coeffs)
+        satisfaction_values.append(satisfaction)
+        all_iterations.append(iterations)
 
     # Graficar los puntos y el polinomio interpolante
     plt.figure(figsize=(10, 6))
@@ -45,4 +54,11 @@ def get_plot_image(t_points, satisfaction_points):
     plt.savefig(buf, format='png')
     buf.seek(0)
     plt.close()
-    return buf.getvalue()
+
+    # Preparar las iteraciones para ser devueltas
+    iteraciones_resultado = [
+        {"iteracion": iteracion, "valor": valor}
+        for iters in all_iterations for iteracion, valor in iters
+    ]
+
+    return buf.getvalue(), iteraciones_resultado

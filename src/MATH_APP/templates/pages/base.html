@@ -6,22 +6,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}{% endblock %}</title>
+    <!-- Stylesheets -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Incluir SweetAlert2 CSS -->
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-    <!-- Incluir SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script src="{% static 'Charts/chartsNewtonR.js' %}"></script>
-    
-   
-   <style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+
+    <style>
+        /* General Styles */
         body {
             font-family: Arial, sans-serif;
             color: #333;
             margin: 0;
             padding: 0;
-            background-color: #2c3e50; /* Fondo oscuro */
+            background-color: #2c3e50;
         }
         .container {
             display: flex;
@@ -52,15 +51,13 @@
         }
         .sidebar a {
             font-size: 18px;
-            transition: color 0.3s;
-            display: flex;
-            align-items: center;
-        }
-        a {
             color: #fff;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
         }
-        a:hover {
+        .sidebar a:hover {
             color: #f0f0f0;
         }
         .sidebar a .icon {
@@ -95,8 +92,8 @@
             margin: 0 0 10px;
             font-size: 24px;
         }
-         .chart {
-           background: white;       
+        .chart {
+            background: white;
         }
         .footer {
             background-color: #2c3e50;
@@ -109,53 +106,56 @@
             margin: 0;
             font-size: 14px;
         }
-          /* Estilos para la lista con scroll */
-      .lista-con-scroll {
+        .lista-con-scroll {
             list-style-type: none;
-            /* Eliminar viñetas de la lista */
             padding: 0;
-            /* Eliminar relleno interno */
             margin: 0;
-            /* Eliminar margen */
             overflow-y: auto;
-            /* Agregar desplazamiento vertical */
             height: 200px;
-            /* Altura máxima de la lista */
             border: 1px solid #ccc;
-            /* Añadir borde para visualización */
         }
-
         .lista-con-scroll li {
             padding: 8px 16px;
-            /* Añadir relleno a los elementos de la lista */
             border-bottom: 1px solid #eee;
-            /* Añadir línea separadora entre elementos */
-        } 
+        }
+
+        /* DataTables Styles */
+        table.dataTable {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        table.dataTable thead th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        table.dataTable tbody tr {
+            background-color: #fff;
+        }
+        table.dataTable tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        table.dataTable tbody tr:hover {
+            background-color: #e9ecef;
+        }
+        table.dataTable td, table.dataTable th {
+            border: 1px solid #dee2e6;
+        }
+        table.dataTable thead th {
+            border-bottom: 2px solid #dee2e6;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
             <h2><i class="fas fa-list icon"></i> Menú de informes</h2>
-
-            
             <ul>
                 <li><a href="{% url 'Index' %}"><i class="fas fa-home icon"></i> Inicio</a></li>
-                <br>
-                <li>
-                    <a href="{% url 'show_newton_raphson' %}"><i class="fas fa-user icon"></i> Retención de clientes con descuentos óptimos - Newton Raphson</a>
-                </li>
-                <li>
-                    <a href="{% url 'ShowSecante' %}"><i class="fas fa-clock icon"></i> Tiempo óptimo de producción para la fabricación de productos - Secante</a>
-                </li>
-                <li>
-                    <a href="{% url 'ShowPolinomioNewton' %}"><i class="fas fa-headset icon"></i> Proyección soporte al cliente - Polinomios de Newton </a>
-                </li>
-                <li>
-                    <a href="{% url 'langrange' %}"><i class="fas fa-smile icon"></i> Proyección de satisfacción al cliente - Lagrange </a>
-                </li>
-                <br>
-                <li><a href="{% url 'UserManual' %}"><i class="fas fa-book icon"></i> Manual de usuario </a></li>
+                <li><a href="{% url 'show_newton_raphson' %}"><i class="fas fa-user icon"></i> Retención de clientes con descuentos óptimos - Newton Raphson</a></li>
+                <li><a href="{% url 'ShowSecante' %}"><i class="fas fa-clock icon"></i> Tiempo óptimo de producción para la fabricación de productos - Secante</a></li>
+                <li><a href="{% url 'ShowPolinomioNewton' %}"><i class="fas fa-headset icon"></i> Proyección soporte al cliente - Polinomios de Newton</a></li>
+                <li><a href="{% url 'langrange' %}"><i class="fas fa-smile icon"></i> Proyección de satisfacción al cliente - Lagrange</a></li>
+                <li><a href="{% url 'UserManual' %}"><i class="fas fa-book icon"></i> Manual de usuario</a></li>
             </ul>
         </div>
         <div class="main-content">
@@ -172,47 +172,74 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+    <footer>
+        <!-- Scripts -->
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.flash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script src="{% static 'Charts/chartsNewtonR.js' %}"></script>
+        <script src="{% static 'js/datatables.js' %}"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script>
+        <script>
+            $(document).ready(function() {
+                $('#clientesTable').DataTable({
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    info: true,
+                    lengthChange: true,
+                    pageLength: 5,  // Configure to show 5 records per page
+                    dom: 'Bfrtip',
+                    buttons: ['copy', 'excel', 'csv', 'pdf', 'print'],
+                    scrollX: true
+                });
+            });
 
-        const dato = JSON.parse('{{ ultimo_valor | escapejs }}');
-        var calculator = Desmos.Calculator(document.getElementById('calculator'), {
-        expressionsCollapsed: true
-        });
-        var x_interseccion = dato;
-        calculator.setExpression({ id: 'graph1', latex: 'y = x - ' + x_interseccion });
+            const dato = JSON.parse('{{ ultimo_valor | escapejs }}');
+            var calculator = Desmos.Calculator(document.getElementById('calculator'), {
+                expressionsCollapsed: true
+            });
+            calculator.setExpression({ id: 'graph1', latex: 'y = x - ' + dato });
 
-
-        // Actualiza la ecuación cuando se cambian los valores de m y b
-        function updateGraph() {
-        var m = parseFloat(document.getElementById('m').value);
-        var b = parseFloat(document.getElementById('b').value);
-        calculator.setExpression({ id: 'graph1', latex: 'y = ' + m + 'x + ' + b });
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            var lista = document.getElementById('miLista');
-            var alturaTotal = lista.scrollHeight;
-            var alturaMaxima = 200; // Puedes ajustar esto según tus necesidades
-
-            // Si la altura total excede la altura máxima, agregar un scrollbar
-            if (alturaTotal > alturaMaxima) {
-                lista.style.overflowY = 'auto'; // Habilitar el scrollbar vertical
-                lista.style.maxHeight = alturaMaxima + 'px'; // Establecer la altura máxima
+            function updateGraph() {
+                var m = parseFloat(document.getElementById('m').value);
+                var b = parseFloat(document.getElementById('b').value);
+                calculator.setExpression({ id: 'graph1', latex: 'y = ' + m + 'x + ' + b });
             }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                var lista = document.getElementById('lista');
+                lista.addEventListener('click', function(event) {
+                    if (event.target && event.target.nodeName === 'LI') {
+                        alert('Clicked on: ' + event.target.textContent);
+                    }
+                });
+            });
+        </script>
+    
+    <script>
+        $('[id^=modalEditar]').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); 
+            var id = button.data('id'); 
+            var modal = $(this);
+            modal.find('input[name="editId"]').val(id);
+            modal.find('#editId' + id).val(id);
+            modal.find('#editPrecio' + id).val(button.data('precio'));
+            modal.find('#editNombreProducto' + id).val(button.data('producto'));
+            modal.find('#editSatisfaccion' + id).val(button.data('satisfaccion'));
+            modal.find('#editNombreCliente' + id).val(button.data('nombre'));
         });
-
     </script>
+    </footer>
 </body>
-
-
-<footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</footer>
-s
 </html>

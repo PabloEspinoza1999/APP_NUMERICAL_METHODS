@@ -20,7 +20,7 @@ def save_newton_raphson(request):
                 raise ValueError("El método no convergió.")
 
             precio_optimo, satisfaccion_final, ruta_punto_optimo = resultado
-            
+           
             contexto = {
                 'ruta_punto_optimo': ruta_punto_optimo,
                 'precio_optimo': precio_optimo,
