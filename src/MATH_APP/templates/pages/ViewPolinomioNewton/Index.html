@@ -2,13 +2,12 @@
 {% block titulo %}Polinomios Newton{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
+<div class="container">
     <div class="row">
-        <div class="card-body">
-            <div style="color: black;">
-                <h2>Encuentra el Precio Ideal para Satisfacer a tus Clientes</h2>
-                <p>Utiliza nuestra herramienta de interpolación para identificar el precio óptimo que maximiza la satisfacción de tus clientes basándote en los datos que ingreses.</p>
-            </div>
+        <div class="m-3">
+            
+            <h2>Encuentra el Precio Ideal para Satisfacer a tus Clientes</h2>
+            <p>Utiliza nuestra herramienta de interpolación para identificar el precio óptimo que maximiza la satisfacción de tus clientes basándote en los datos que ingreses.</p>
            
             <div class="mb-3">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAgregar">
@@ -23,14 +22,18 @@
                 {% endif %}
             </div>
 
-            <h6 class="mb-4" style="color: black;"><strong>Lista de Clientes</strong></h6>
-
+            
+            <div class="form-group col-md-6">
+                <label for="producto">Nombre del producto:</label>
+                <input type="text" class="form-control" id="producto" name="producto">
+            </div>
+            
+            <h3 class="mb-4"><strong>Calificaciones</strong></h3>
             <table id="clientesTable" class="display">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Cliente</th>
-                        <th>Producto</th>
                         <th>Precio</th>
                         <th>Nivel de Satisfacción</th>
                         <th>Acciones</th>
@@ -42,7 +45,6 @@
                             <tr>
                                 <td>{{ cliente.id }}</td>
                                 <td>{{ cliente.nombre_cliente }}</td>
-                                <td>{{ cliente.nombre_producto }}</td>
                                 <td>{{ cliente.precio }}</td>
                                 <td>{{ cliente.satisfaccion_cliente }}</td>
                                 <td>
@@ -53,7 +55,6 @@
                                         data-target="#modalEditar{{ cliente.id }}" 
                                         data-id="{{ cliente.id }}" 
                                         data-nombre="{{ cliente.nombre_cliente }}" 
-                                        data-producto="{{ cliente.nombre_producto }}" 
                                         data-precio="{{ cliente.precio }}" 
                                         data-satisfaccion="{{ cliente.satisfaccion_cliente }}"
                                     >
@@ -96,12 +97,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="editNombreProducto{{ cliente.id }}">Nombre del Producto:</label>
-                        <input type="text" id="editNombreProducto{{ cliente.id }}" name="NombreProducto" class="form-control" placeholder="Nombre" required>
-                        <small class="form-text text-muted">Introduce el nombre del Producto.</small>
-                    </div>
-
-                    <div class="form-group">
                         <label for="editSatisfaccion{{ cliente.id }}">Satisfacción del Cliente en cada Precio:</label>
                         <input type="text" id="editSatisfaccion{{ cliente.id }}" name="Satisfaccion" class="form-control" placeholder="5.1" required>
                         <small class="form-text text-muted">Introduce el nivel de satisfacción del cliente correspondiente a cada precio.</small>
@@ -136,10 +131,6 @@
                     <div class="form-group">
                         <label for="nombreCliente">Nombre del Cliente:</label>
                         <input type="text" id="nombreCliente" name="nombre_cliente" class="form-control" placeholder="Nombre del Cliente" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nombreProducto">Nombre del Producto:</label>
-                        <input type="text" id="nombreProducto" name="nombre_producto" class="form-control" placeholder="Nombre del Producto" required>
                     </div>
                     <div class="form-group">
                         <label for="precio">Precio:</label>
