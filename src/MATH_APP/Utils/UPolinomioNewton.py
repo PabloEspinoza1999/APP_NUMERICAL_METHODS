@@ -41,7 +41,7 @@ def get_plot_image(puntos_precios, satisfaction_points):
 
     # Graficar los puntos y el polinomio interpolante
     plt.figure(figsize=(12, 6))
-    plt.plot(t_values, satisfaction_values, label='Oscilación de satisfacción')
+    plt.plot(t_values, satisfaction_values, label='Pronóstico')
     plt.scatter(puntos_precios, satisfaction_points, color='red', zorder=5, label='Satisfacción')
     plt.xlabel('Precio')
     plt.ylabel('Satisfacción')
