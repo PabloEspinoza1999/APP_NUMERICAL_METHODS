@@ -3,60 +3,72 @@
 
 {% block contenido %}
 <div class="card">
-    <div class="card-header"><h5>Calcular temperatura real utilizando el método de la secante</h5></div>
+    <div class="card-header">
+        <h1>Encontrar un precio óptimo para vender un producto, con base al costo de personal utilizando el método de la secante</h1>
+    </div>
     <div class="card-body">
-        <p>Ingrese los valores necesarios</p>
+
         {% if error_message %}
         <div class="alert alert-danger" role="alert">
             Ha ocurrido un problema: {{ error_message }}
         </div>
         {% endif %}
-       
-        {% if resultado is not None %}
+
+        {% if precio_optimo is not None %}
         <label>Resultado:</label>
-       <h5>La temperatura real calibrada es: {{ resultado }}°C en {{ iteraciones|length }} iteraciones </h5> 
+        <p>El precio óptimo aproximado es de ${{ precio_optimo }} en {{ iteraciones|length }} iteraciones </p>
+        <p>El costo total de fabricación aproximado es de ${{ costo }}</p>
+        <p>Se requieren {{ ventas }} ventas para poder alcanzar el ROI de {{ roi }}%</p>
         <br>
-        
-        <label>Iteraciones:</label>
+    
+        <label>A continuación, las iteraciones procesadas (ROIs):</label>
         <ul class="lista-con-scroll" style="color: white;">
             {% for iteracion in iteraciones %}
             <li> {{ iteracion.1 }}</li>
             {% endfor %}
         </ul>
         <br>
-        {% elif iteraciones is not None %}
-        <label>Resultado:</label>
-        <ul class="lista-con-scroll" id="miLista" style="color: white;">
-            <li>No se encontró la temperatura real después de {{ iteraciones|length }} iteraciones</li>
-        </ul>
-        <br>
+        <a href="{% url 'ShowSecante' %}" class="btn btn-primary">Realizar nuevo análsis</a>
+
         {% endif %}
-        
+
+        {% if precio_optimo is None %}
         <form method="post" action="{% url 'SaveSecante' %}">
             {% csrf_token %}
+            <br />
+            <h2>Propuestas de precio de venta (Aproximaciones).</h2>
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="x0">Aproximación inicial x0:</label>
-                    <input type="text" class="form-control" id="x0" name="x0" value="{{ form.x0.value }}" required>
+                    <label for="p0">Precio ($) #1:</label>
+                    <input type="text" class="form-control" id="p0" name="p0" value="{{ form.p0.value }}" required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="x1">Aproximación inicial x1:</label>
-                    <input type="text" class="form-control" id="x1" name="x1" value="{{ form.x1.value }}" required>
+                    <label for="p1"> ($) #2:</label>
+                    <input type="text" class="form-control" id="p1" name="p1" value="{{ form.p1.value }}" required>
                 </div>
             </div>
+
+            <br/>
+            <h2>Datos sobre el costo de fabricación por personal.</h2>
+            <br/>
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label for="tol">Tolerancia:</label>
-                    <input type="text" class="form-control" id="tol" name="tol" required>
+                    <label for="total_personal">Cantidad de personal:</label>
+                    <input type="text" class="form-control" id="total_personal" name="total_personal" required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="max_iter">Iteraciones máximas:</label>
-                    <input type="text" class="form-control" id="max_iter" name="max_iter" required>
+                    <label for="salario_mensual">Salario mensual ($):</label>
+                    <input type="text" class="form-control" id="salario_mensual" name="salario_mensual" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="horas_trabajo">Horas de trabajo mensual por personal:</label>
+                    <input type="text" class="form-control" id="horas_trabajo" name="horas_trabajo" required>
                 </div>
             </div>
         
-            <button type="submit" class="btn btn-primary">Calcular</button>
+            <button type="submit" class="btn btn-success">Analizar</button>
         </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
