@@ -1,99 +1,102 @@
 from django.shortcuts import render
+import base64
 from django.http import HttpResponse
 from ..Utils import USecante
-import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
 
 
 def ShowSecante(request):
-    salario = 3000
-    n_desarrolladores = 20
-    horas_trabajo = 1000
-    costo_total = n_desarrolladores * salario * (horas_trabajo / 160)
-    print('Costo total', costo_total)
-
-
-    # Función del ROI
-    def ROI(p):
-        ingresos = p * ventas(p)
-        return (ingresos - costo_total) / costo_total
-
-
-
-    p0, p1 = 500, 600
-    precio_optimo, iteraciones = USecante.metodo_secante(ROI, p0, p1)
-
-    print(f"El precio óptimo es: ${precio_optimo:.2f}", flush=True)
-    print(f"El ROI en este punto es: {ROI(precio_optimo):.2f}", flush=True)
-    print(f"La cantidad de ventas necesarias son: {ventas(precio_optimo):.2f}", flush=True)
-
-    precios = np.linspace(0, 3000, 500)
-    roi_values = ROI(precios)
-
-
-    # Extraemos las iteraciones para graficar
-    iter_precios, iter_rois = zip(*iteraciones)
-
-    # Creamos la gráfica
-    plt.figure(figsize=(12, 8))
-    plt.plot(precios, roi_values, label='ROI vs Precio', color='blue')
-    plt.axvline(x=precio_optimo, color='red', linestyle='--', label=f'Precio Óptimo: ${precio_optimo:.2f}')
-    plt.scatter(precio_optimo, ROI(precio_optimo), color='red')
-
-    # Graficamos las iteraciones
-    plt.plot(iter_precios, iter_rois, 'o-', color='green', label='Iteraciones')
-
-    # Añadimos etiquetas y título
-    plt.title('Retorno de Inversión (ROI) en función del Precio con Iteraciones del Método de la Secante')
-    plt.xlabel('Precio ($)')
-    plt.ylabel('ROI')
-    plt.legend()
-    plt.grid(True)
-
-
-
-    # Guardar la imagen en un objeto BytesIO
-    buf = BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    plt.close()
-    print("Generando imagen")
-
-    response = HttpResponse(buf.getvalue(), content_type='image/png;base64')
-    response['Content-Disposition'] = 'attachment; filename="grafica.png"'
-
-    return response
+    context = {'resultado' : None, 'iteraciones': None }
+    return render(request, 'pages/ViewSecante/Index.html', context=context)
 
 
 
 def SaveSecante(request):
     if request.method == 'POST':
         try:
-            x0 = float(request.POST.get('x0'))
-            x1 = float(request.POST.get('x1'))
-            tol = float(request.POST.get('tol'))
-            max_iter = int(request.POST.get('max_iter'))
+            # Se obtiene el ROI especificado
+            roi =  float(request.POST.get('roi'))
+            target_roi = roi / 100
 
-            # Definimos la función de desviación
-            f = lambda T: 0.01 * T**2 - 0.5 * T + 3
+            # Número de unidades esperadas a vender y costo total de desarrollo
+            units_sold = float(request.POST.get('unidades'))
+            total_cost = float(request.POST.get('costo_total'))
 
-            # Aplicamos el método de la secante
-            resultado, num_iteraciones, iteraciones = USecante.AlgoritSecante(f, x0, x1, tol, max_iter)
+
+            # Propuestas iniciales de precios
+            x0 = float(request.POST.get('p0'))
+            x1 = float(request.POST.get('p1'))
+
+
+            def roi_function(price, units_sold, total_cost):
+                ingresos = units_sold * price
+                ganancia_neta = ingresos - total_cost
+                return ganancia_neta / total_cost
+
+
+            def target_function(price):
+                return roi_function(price, units_sold, total_cost) - target_roi
+
+
+            precio_optimo, iteraciones = USecante.secant_method(target_function, x0, x1)
+            required_units_sold = total_cost * (1 + target_roi) / precio_optimo
+
+            # Mostrar el precio óptimo
+            print(f"El precio óptimo que genera un ROI del { roi }%: ${precio_optimo:.2f}", flush=True)
+
+            # Mostrar la cantidad de iteraciones y los valores obtenidos en cada una
+            print("\nIteraciones del método de la secante:")
+            for i, val_x0, val_x1 in iteraciones:
+                print(f"Iteración {i}: x0 = {val_x0:.2f}, x1 = {val_x1:.2f}", flush=True)
+
+            print(f"La cantidad de ventas necesarias son: {required_units_sold}", flush=True)
+
+
+            print("--------------------------------\n")
+            print("Generando imagen")
+
+
+            # Gráfica del método de la secante
+            # Extraer las iteraciones en x e y
+            x_vals = [x1 for _, _, x1 in iteraciones]
+            y_vals = [target_function(x) for x in x_vals]
+
+            plt.figure(figsize=(10, 6))
+            plt.plot(x_vals, y_vals, 'o-', label='Iteraciones')
+            plt.axhline(0, color='r', linestyle='--', label='ROI objetivo')
+
+            # Marcar el punto de convergencia
+            plt.scatter([precio_optimo], [target_function(precio_optimo)], color='g', zorder=5, label=f'Precio óptimo: ${precio_optimo:.2f}')
+
+            plt.title('Convergencia del Método de la Secante')
+            plt.xlabel('Precio')
+            plt.ylabel('Función objetivo (f(p))')
+            plt.legend()
+            plt.grid(True)
+
+            # Guardar la imagen en un objeto BytesIO
+            buf = BytesIO()
+            plt.savefig(buf, format='png')
+            buf.seek(0)
+            plt.close()
+
+            imagen = 'data:image/png;base64,' + base64.b64encode(buf.getvalue()).decode('utf-8')
 
             contexto = {
-                'resultado': resultado,  # Esto es un float o None
-                'iteraciones': iteraciones  # Esto es una lista de tuplas (iteración, valor)
+                'costo'         : total_cost,
+                'precio_optimo' : f"{precio_optimo:.2f}",
+                'roi'           : roi,
+                'iteraciones'   : iteraciones,
+                'ventas'        : required_units_sold,
+                'imagen'        : imagen
             }
+
         except (ValueError, TypeError) as e:
             contexto = {
-                'error_message': f"Error en los datos de entrada: {str(e)}"
+                'error_message': f"Error en los datos de entrada: {e}"
             }
 
         return render(request, 'pages/ViewSecante/Index.html', contexto)
 
     return render(request, 'pages/ViewSecante/Index.html')
-
-
-def ventas(p, V0=10000, alpha=0.01):
-    return V0 * np.exp(-alpha * p)
