@@ -1,62 +1,55 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
 
-
-def satisfaccion_cliente(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio):
-    """
-    Calcula la satisfacción del cliente en función del precio.
-    """
-    demanda = cantidad_maxima_demandada - tasa_cambio_demanda_precio * precio
-    satisfaccion = demanda * (precio - costo)  # Modelo simplificado
-    return satisfaccion
-
-def derivada_satisfaccion_cliente(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio, delta=0.001):
-    """
-    Calcula la primera derivada de la satisfacción del cliente con respecto al precio.
-    """
-    return (satisfaccion_cliente(precio + delta, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio) - 
-            satisfaccion_cliente(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio)) / delta
-
-def segunda_derivada_satisfaccion_cliente(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio, delta=0.001):
-    """
-    Calcula la segunda derivada de la satisfacción del cliente con respecto al precio.
-    """
-    return (derivada_satisfaccion_cliente(precio + delta, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio) - 
-            derivada_satisfaccion_cliente(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio)) / delta
-
-def newton_raphson_precio(precio_inicial, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio, tolerancia=0.01, max_iter=100):
-    """
-    Encuentra el precio óptimo que maximiza la satisfacción del cliente usando el método de Newton-Raphson.
-    Devuelve el precio óptimo y la satisfacción en ese precio.
-    """
-    precio = precio_inicial
-    ruta_punto_optimo = []
+def newton_raphson_optimize_cost(Tiempos, lambda_param=0.1, tol=1e-10, max_iter=100):
+    T_prom = sum(Tiempos) / len(Tiempos)
     
-    for _ in range(max_iter):
-        # Calcular satisfacción y sus derivadas
-        satisfaccion = satisfaccion_cliente(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio)
-        derivada = derivada_satisfaccion_cliente(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio)
-        segunda_derivada = segunda_derivada_satisfaccion_cliente(precio, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio)
-        
-        # Mostrar la satisfacción actual para fines de diagnóstico
-        print(f"Precio actual: {precio:.2f}, Satisfacción: {satisfaccion:.2f}")
-        
-        # Agregar el precio y la satisfacción actual a la ruta de puntos óptimos
-        ruta_punto_optimo.append((precio, satisfaccion))
-        
-        # Verificar si la segunda derivada es suficientemente pequeña
-        if abs(segunda_derivada) < tolerancia:
-            raise ValueError("Segunda derivada demasiado pequeña, el método puede no converger.")
-        
-        # Calcular el nuevo precio usando el método de Newton-Raphson
-        precio_nuevo = precio - derivada / segunda_derivada
-        
-        # Verificar la convergencia
-        if abs(precio_nuevo - precio) < tolerancia:
-            satisfaccion_final = satisfaccion_cliente(precio_nuevo, costo, cantidad_maxima_demandada, tasa_cambio_demanda_precio)
-            ruta_punto_optimo.append((precio_nuevo, satisfaccion_final))
-            return precio_nuevo, satisfaccion_final, ruta_punto_optimo
-        
-        # Actualizar el precio
-        precio = precio_nuevo
+    def cost_function(T):
+        return (T - T_prom)**2 + lambda_param * T**2 + 0.1 * (T - T_prom)**3
     
-    # Si no converge, se puede retornar None
-    return None
+    def cost_derivative(T):
+        return 2 * (T - T_prom) + 2 * lambda_param * T + 0.3 * (T - T_prom)**2
+    
+    def cost_second_derivative(T):
+        return 2 + 2 * lambda_param + 0.6 * (T - T_prom)
+    
+    T = T_prom
+    Ruta = []  
+    
+    for i in range(max_iter):
+        f_T = cost_derivative(T)
+        f_prime_T = cost_second_derivative(T)
+        T_new = T - f_T / f_prime_T
+        
+        Ruta.append({'iteracion': i + 1, 'valor': T})
+        if abs(T_new - T) < tol:
+            break
+        
+        T = T_new
+    
+    def generate_plot_image():
+        T_values = np.linspace(min(Tiempos), max(Tiempos), 100)
+        cost_values = [cost_function(T) for T in T_values]
+        
+        plt.figure(figsize=(10, 6))
+        plt.plot(T_values, cost_values, label='Función de Costo')
+        plt.axvline(x=T, color='r', linestyle='--', label=f'Tiempo Óptimo: {T:.2f}')
+        plt.xlabel('Tiempo de Respuesta')
+        plt.ylabel('Costo')
+        plt.title('Optimización de Costo con Newton-Raphson')
+        plt.legend()
+        plt.grid(True)
+        
+        buf = BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        plt.close()
+        
+        plot_image_data = base64.b64encode(buf.getvalue()).decode('utf-8')
+        return plot_image_data
+
+    plot_image_data = generate_plot_image()
+
+    return T, plot_image_data, Ruta
