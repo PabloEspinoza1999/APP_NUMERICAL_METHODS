@@ -13,8 +13,6 @@ def ShowPolinomioNewton(request):
     for cliente in lista_cliente:
         cliente.precio = round(cliente.precio, 2)
         cliente.satisfaccion_cliente = round(cliente.satisfaccion_cliente, 2)
-      
-
     return render(request, 'pages/ViewPolinomioNewton/Index.html', {'lista_cliente': lista_cliente })
 
 

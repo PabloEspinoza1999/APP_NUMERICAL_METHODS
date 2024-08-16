@@ -1,84 +1,297 @@
 {% extends "pages/base.html" %}
-{% block titulo %}Informe de soporte técnico usuarios finales{% endblock %}
+{% block titulo %}Newton{% endblock %}
 
 {% block contenido %}
-<div class="card">
-    <div class="card-header">
-        <p>Generación de informe de soporte técnico a clientes, este informe utiliza un algoritmo basado en Newton
-            Raphson para el procesamiento de los datos que se ingresan.
-        </p>
+<div class="container">
+    <div class="row">
+        <div class="m-3">
+            <h5><strong>Optimización del Tiempo de Respuesta</strong></h5>
+            <h6> Optimizar el tiempo de respuesta del personal de call center, para mejorar el uso de los recursos utilizados por el personal de call center.</h6>
+            <br>
+            {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                Ha ocurrido un problema: {{ error_message }}
+            </div>
+            {% endif %}
+            
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAgregar">
+                    Agregar Registro
+                </button>
+                <a href="{% url 'SaveNewtonRaphson' %}" class="btn btn-primary ml-2">Realizar Análisis de datos</a>
+                
+                {% if plot_image %}
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalRequest">
+                    Ver Resultados Análisis 
+                </button>
+                {% endif %}
+            </div>
+            <table id="clientesTable" class="display">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Tiempo de Respuesta</th>
+                        <th>Fecha de Registro</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if lista_cliente %}
+                        {% for cliente in lista_cliente %}
+                            <tr>
+                                <td>{{ cliente.id }}</td>
+                                <td>{{ cliente.nombre_cliente }}</td>
+                                <td>{{ cliente.tiempo_respuesta }}</td>
+                                <td>{{ cliente.fecha_registro|default:"Fecha no disponible" }}</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <form action="{% url 'Deleteclient' cliente.id %}" method="post" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este cliente?');">X</button>
+                                        </form>
+                                        <button 
+                                        type="button" 
+                                        class="btn btn-success" 
+                                        data-toggle="modal" 
+                                        data-target="#modalEditar{{ cliente.id }}" 
+                                        data-id="{{ cliente.id }}" 
+                                        data-nombre="{{ cliente.nombre_cliente }}" 
+                                        data-tiempo="{{ cliente.tiempo_respuesta }}" 
+                                        data-fecha="{{ cliente.fecha_registro|date:"d/m/Y" }}"
+                                        data-correo="{{ cliente.correo }}"
+                                        data-telefono="{{ cliente.telefono }}"
+                                        data-direccion="{{ cliente.direccion }}"
+                                        data-tipo="{{ cliente.tipo_cliente }}"
+                                        data-estado="{{ cliente.estado_cuenta }}"
+                                        data-preferencias="{{ cliente.preferencias }}"
+                                        data-comentarios="{{ cliente.comentarios }}"
+                                        type="button" class="btn btn-success">Ver</button>
+                                      </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">No hay datos disponibles.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
     </div>
-   
-    <div class="card-body">
+</div>
 
-        {% if error_message %}
-        <div class="alert alert-danger" role="alert">
-            Ha ocurrido un problema al procesar tu información: {{error_message}}
-        </div>
-        {% endif %}
-        
-        <p>Para elaborar este informe se requiere de los siguientes datos:</p>
-        {% if ruta_punto_optimo %}
-        <label>Precio óptimo:</label>
-        <ul class="lista-con-scroll" id="miLista" style="color: white;">
-            {% for punto in ruta_punto_optimo %}
-            <li> {{ punto }}</li>
-            {% endfor %}
-        </ul>
-        <br>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalGrafico">Ver
-            Gráfico
-        </button>
-        <br>
-        <div id="modalGrafico" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" style="color: black;"> <img
-                                src="https://i0.wp.com/static2.mbtfiles.co.uk/media/docs/newdocs/as_and_a_level/maths/core_and_pure_mathematics/908942/html/images/image05.png"
-                                width="300px;" height="100px;" alt="" srcset=""> .. X= {{ultimo_valor}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+<!-- Modal Editar Cliente -->
+{% for cliente in lista_cliente %}
+<div id="modalEditar{{ cliente.id }}" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" style="color: black;">Editar Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="color: black;">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="editId{{ cliente.id }}" name="id" value="{{ cliente.id }}">
+                    
+                    <div class="form-group">
+                        <label for="editNombreCliente{{ cliente.id }}">Nombre del Cliente:</label>
+                        <input type="text" id="editNombreCliente{{ cliente.id }}" name="nombre_cliente" class="form-control" placeholder="Nombre" value="{{ cliente.nombre_cliente }}" required>
                     </div>
-                    <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
-                        <div id="calculator" style="width: 600px; height: 400px;"></div>
 
+                    <div class="form-group">
+                        <label for="editTiempoRespuesta{{ cliente.id }}">Tiempo de Respuesta:</label>
+                        <input type="number" step="0.01" id="editTiempoRespuesta{{ cliente.id }}" name="tiempo_respuesta" class="form-control" placeholder="10.1" value="{{ cliente.tiempo_respuesta }}" required>
+                        <small class="form-text text-muted">Introduce el tiempo de respuesta en minutos.</small>
                     </div>
+
+                    <div class="form-group">
+                        <label for="editFechaRegistro{{ cliente.id }}">Fecha de Registro:</label>
+                        <input type="date" id="editFechaRegistro{{ cliente.id }}" name="fecha_registro" class="form-control" value="{{ cliente.fecha_registro|default:"Fecha no disponible" }}" required>
+                        <small class="form-text text-muted">Introduce la fecha de registro del cliente.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editCorreo{{ cliente.id }}">Correo:</label>
+                        <input type="email" id="editCorreo{{ cliente.id }}" name="correo" class="form-control" placeholder="correo@example.com" value="{{ cliente.correo }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTelefono{{ cliente.id }}">Teléfono:</label>
+                        <input type="text" id="editTelefono{{ cliente.id }}" name="telefono" class="form-control" placeholder="555-1234" value="{{ cliente.telefono }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editDireccion{{ cliente.id }}">Dirección:</label>
+                        <input type="text" id="editDireccion{{ cliente.id }}" name="direccion" class="form-control" placeholder="Dirección" value="{{ cliente.direccion }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTipoCliente{{ cliente.id }}">Tipo de Cliente:</label>
+                        <select id="editTipoCliente{{ cliente.id }}" name="tipo_cliente" class="form-control" required>
+                            <option value="Regular" {% if cliente.tipo_cliente == 'Regular' %}selected{% endif %}>Regular</option>
+                            <option value="VIP" {% if cliente.tipo_cliente == 'VIP' %}selected{% endif %}>VIP</option>
+                            <option value="Nuevo" {% if cliente.tipo_cliente == 'Nuevo' %}selected{% endif %}>Nuevo</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editEstadoCuenta{{ cliente.id }}">Estado de Cuenta:</label>
+                        <select id="editEstadoCuenta{{ cliente.id }}" name="estado_cuenta" class="form-control" required>
+                            <option value="Activa" {% if cliente.estado_cuenta == 'Activa' %}selected{% endif %}>Activa</option>
+                            <option value="Inactiva" {% if cliente.estado_cuenta == 'Inactiva' %}selected{% endif %}>Inactiva</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editPreferencias{{ cliente.id }}">Preferencias:</label>
+                        <input type="text" id="editPreferencias{{ cliente.id }}" name="preferencias" class="form-control" placeholder="Preferencias" value="{{ cliente.preferencias }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editComentarios{{ cliente.id }}">Comentarios:</label>
+                        <textarea id="editComentarios{{ cliente.id }}" name="comentarios" class="form-control" placeholder="Comentarios">{{ cliente.comentarios }}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+<!-- Modal Agregar Cliente -->
+<div id="modalAgregar" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" style="color: black;">Agregar Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="color: black;">
+                <form method="POST" action="{% url 'SaveClient' %}" >
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="nombreCliente">Nombre del Cliente:</label>
+                        <input type="text" id="nombreCliente" name="nombre_cliente" class="form-control" placeholder="Nombre del Cliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tiempoRespuesta">Tiempo de Respuesta:</label>
+                        <input type="number" step="0.01" id="tiempoRespuesta" name="tiempo_respuesta" class="form-control" placeholder="Tiempo de Respuesta" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaRegistro">Fecha de Registro:</label>
+                        <input type="date" id="fechaRegistro" name="fecha_registro" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="correo">Correo:</label>
+                        <input type="email" id="correo" name="correo" class="form-control" placeholder="Correo Electrónico" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono:</label>
+                        <input type="text" id="telefono" name="telefono" class="form-control" placeholder="Número de Teléfono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion">Dirección:</label>
+                        <input type="text" id="direccion" name="direccion" class="form-control" placeholder="Dirección" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipoCliente">Tipo de Cliente:</label>
+                        <select id="tipoCliente" name="tipo_cliente" class="form-control" required>
+                            <option value="Regular">Regular</option>
+                            <option value="VIP">VIP</option>
+                            <option value="Nuevo">Nuevo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="estadoCuenta">Estado de Cuenta:</label>
+                        <select id="estadoCuenta" name="estado_cuenta" class="form-control" required>
+                            <option value="Activa">Activa</option>
+                            <option value="Inactiva">Inactiva</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferencias">Preferencias:</label>
+                        <input type="text" id="preferencias" name="preferencias" class="form-control" placeholder="Preferencias">
+                    </div>
+                    <div class="form-group">
+                        <label for="comentarios">Comentarios:</label>
+                        <textarea id="comentarios" name="comentarios" class="form-control" placeholder="Comentarios"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar Cliente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ver Resultados Análisis -->
+<div id="modalRequest" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document"> <!-- Aumenta el tamaño del modal -->
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" style="color: black; font-size: 1.5rem;">Análisis</h5> <!-- Tamaño de fuente mayor -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="color: black; font-size: 1.1rem;">
+             <h5><strong>Tiempo Óptimo:</strong>{{Tiempo}}</h5>
+                <div class="detalle-analisis">
+                    <img src="https://cdn.goconqr.com/uploads/media/image/10507969/desktop_3672d64c-302a-4b41-9032-31ee12030f4a.png" width="200px" height="50px" alt="">
+                    <details>
+                        <summary style="font-size: 1.3rem; font-weight: bold;">Gráfica</summary> <!-- Tamaño de fuente mayor -->
+                        <div class="mt-4">
+                            <h3 style="font-size: 1.5rem;">Gráfica de Interpolación de Newton</h3> <!-- Tamaño de fuente mayor -->
+                            <img src="{{ plot_image }}" alt="Newton" style="width: 100%; max-width: 800px; height: auto;"> <!-- Imagen más grande -->
+                            <a href="{{ plot_image }}" download="Newton.png" class="btn btn-primary mt-3">Descargar Imagen</a> <!-- Botón para descargar -->
+                        </div>
+                    </details>
+                    <br>
+                    <details>
+                        <summary style="font-size: 1.3rem; font-weight: bold;">Proceso</summary> <!-- Tamaño de fuente mayor -->
+                        <div class="mt-4">
+                            {% if error_message %}
+                                <div class="alert alert-danger" role="alert">
+                                    Ha ocurrido un problema: {{ error_message }}
+                                </div>
+                            {% endif %}
+                        
+                            {% if Ruta %}
+                                <label class="d-block mb-2">Tiempo Óptimo:</label>
+                                <div class="table-container mb-4">
+                                    <table class="table table-striped">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Iteración</th>
+                                                <th>Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for punto in Ruta %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td> 
+                                                    <td>{{ punto.valor }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                    </details>
                 </div>
             </div>
         </div>
-        <br>
-        {% endif %}
-
-
-        <form method="post" action="{% url 'SaveNewtonRaphson' %}">
-            {% csrf_token %}
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="precio">Precio(x):</label>
-                    <input type="text" class="form-control" id="precio" name="precio" required>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="costo">Costo :</label>
-                    <input type="text" class="form-control" id="costo" name="costo" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="cantidad_maxima_demandada"> Cantidad maxima demandada:</label>
-                    <input type="text" class="form-control" id="cantidad_maxima_demandada"
-                        name="cantidad_maxima_demandada" required>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="tasa_cambio_demanda_precio">Tasa de cambio demanda precio:</label>
-                    <input type="text" class="form-control" id="tasa_cambio_demanda_precio"
-                        name="tasa_cambio_demanda_precio" required>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Realizar cálculo</button>
-        </form>
     </div>
 </div>
 {% endblock %}

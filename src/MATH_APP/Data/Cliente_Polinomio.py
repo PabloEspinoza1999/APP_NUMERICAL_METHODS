@@ -1,9 +1,10 @@
 from decimal import Decimal
 
 class Cliente_Polinomio:
-    def __init__(self, id, nombre_cliente, precio, satisfaccion_cliente):
+    def __init__(self, id, nombre_cliente, nombre_producto, precio, satisfaccion_cliente):
         self.id = id
         self.nombre_cliente = nombre_cliente
+        self.nombre_producto = nombre_producto
         self.precio = Decimal(precio)
         self.satisfaccion_cliente = Decimal(satisfaccion_cliente)
 
@@ -11,36 +12,16 @@ class Cliente_Polinomio:
 class Cliente_PolinomioData:
     def __init__(self):
         self.clientes = [
-            Cliente_Polinomio(1,  "Ana Gómez",          250.20,  2.50),
-            Cliente_Polinomio(2,  "Luis Martínez",      350.45,  5.00),
-            Cliente_Polinomio(3,  "Maria Rodríguez",    280.20,  4.20),
-            Cliente_Polinomio(4,  "Carlos Pérez",       400.20,  3.70),
-            Cliente_Polinomio(5,  "Laura López",        200.30,  4.00),
-            Cliente_Polinomio(6,  "Jorge Díaz",         320.50,  3.50),
-            Cliente_Polinomio(7,  "Patricia Fernández", 299.99,  4.90),
-            Cliente_Polinomio(8,  "Antonio Gómez",      149.98,  4.10),
-            Cliente_Polinomio(9,  "Carmen González",    189.80,  3.50),
-            Cliente_Polinomio(10, "Ricardo Sánchez",    150.99,  4.60),
-            Cliente_Polinomio(11, 'Isabel Ramírez',     484.44, 2.25),
-            Cliente_Polinomio(12, 'Pablo Herrera',      244.78, 1.01),
-            Cliente_Polinomio(13, 'Andrea Torres',      250.03, 0.00),
-            Cliente_Polinomio(14, 'Sergio Jiménez',     138.09, 1.00),
-            Cliente_Polinomio(15, 'Marta García',       486.99, 4.00),
-            Cliente_Polinomio(16, 'Enrique Morales',    409.26, 4.42),
-            Cliente_Polinomio(17, 'Sofía Rivera',       375.57, 2.73),
-            Cliente_Polinomio(18, 'Manuel Ortiz',       389.77, 1.43),
-            Cliente_Polinomio(19, 'Elena Castillo',     355.13, 3.42),
-            Cliente_Polinomio(20, 'Pedro Vargas',       417.68, 3.32),
-            Cliente_Polinomio(21, 'Gloria Pérez',       386.53, 2.82),
-            Cliente_Polinomio(22, 'David Fernández',    332.53, 3.7),
-            Cliente_Polinomio(23, 'Rosa Mendoza',       322.3,  3.91),
-            Cliente_Polinomio(24, 'Alberto Martínez',   426.62, 4.11),
-            Cliente_Polinomio(25, 'Silvia Ruiz',        430.42, 4.56),
-            Cliente_Polinomio(26, 'Raúl González',      113.21, 4.07),
-            Cliente_Polinomio(27, 'Carolina Ramírez',   276.21, 2.88),
-            Cliente_Polinomio(28, 'Oscar García',       317.41, 6.71),
-            Cliente_Polinomio(29, 'Irene Martínez',     119.78, 3.34),
-            Cliente_Polinomio(30, 'Francisco Sánchez',  103.91, 2.52)
+            Cliente_Polinomio(1, "Ana Gómez", "Smartphone XYZ", '299.99', '4.5'),
+            Cliente_Polinomio(2, "Luis Martínez", "Laptop Pro 15", '1299.00', '3.8'),
+            Cliente_Polinomio(3, "Maria Rodríguez", "Tablet Air", '499.99', '4.2'),
+            Cliente_Polinomio(4, "Carlos Pérez", "Smartwatch Z", '199.99', '4.7'),
+            Cliente_Polinomio(5, "Laura López", "Auriculares Bose", '249.99', '4.0'),
+            Cliente_Polinomio(6, "Jorge Díaz", "Cámara Digital Canon", '549.00', '3.5'),
+            Cliente_Polinomio(7, "Patricia Fernández", "Televisor OLED 4K", '1499.00', '4.8'),
+            Cliente_Polinomio(8, "Antonio Gómez", "Router WiFi 6", '149.99', '4.1'),
+            Cliente_Polinomio(9, "Carmen González", "Impresora Láser HP", '189.99', '3.9'),
+            Cliente_Polinomio(10, "Ricardo Sánchez", "Consola de Videojuegos", '399.99', '4.6'),
         ]
         self.next_id = len(self.clientes) + 1
 
@@ -51,6 +32,7 @@ class Cliente_PolinomioData:
         cliente = Cliente_Polinomio(
             self.next_id,
             cliente_data["nombre_cliente"],
+            cliente_data["nombre_producto"],
             cliente_data["precio"],
             cliente_data["satisfaccion_cliente"]
         )

@@ -16,12 +16,11 @@ def SaveSecante(request):
             # Definimos la función de desviación
             f = lambda T: 0.01 * T**2 - 0.5 * T + 3
 
-            # Aplicamos el método de la secante
             resultado, num_iteraciones, iteraciones = USecante.AlgoritSecante(f, x0, x1, tol, max_iter)
 
             contexto = {
-                'resultado': resultado,  # Esto es un float o None
-                'iteraciones': iteraciones  # Esto es una lista de tuplas (iteración, valor)
+                'resultado': resultado,  
+                'iteraciones': iteraciones  
             }
         except (ValueError, TypeError) as e:
             contexto = {
