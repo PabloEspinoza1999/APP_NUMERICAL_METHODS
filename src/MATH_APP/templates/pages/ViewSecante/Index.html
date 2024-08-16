@@ -25,15 +25,34 @@
         <br>
     
         <label>A continuación, las iteraciones procesadas (ROIs):</label>
-        <ul class="lista-con-scroll" style="color: white;">
-            {% for iteracion in iteraciones %}
-            <li> # {{ iteracion.0 }} ${{ iteracion.1 }} </li>
-            {% endfor %}
-        </ul>
+        <table class="table table-fluid text-white bordered">
+            <thead>
+                <tr>
+                    <th># Iteración</th>
+                    <th>Precio calculado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for iteracion in iteraciones %}
+                <tr>
+                    <td># {{ iteracion.0 }}</td>
+                    <td>${{ iteracion.1 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         <br>
+
+        <img class="img" src="{{ imagen }}" alt="Gráfica procesada" />
+        <br>
+        <br>
+
+
         <a href="{% url 'ShowSecante' %}" class="btn btn-primary">Realizar nuevo análsis</a>
 
         {% endif %}
+
+
 
         {% if precio_optimo is None %}
         <form method="post" action="{% url 'SaveSecante' %}">

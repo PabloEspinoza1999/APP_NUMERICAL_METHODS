@@ -1,7 +1,7 @@
 from django.shortcuts import render
+import base64
 from django.http import HttpResponse
 from ..Utils import USecante
-import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
 
@@ -15,18 +15,7 @@ def ShowSecante(request):
 def SaveSecante(request):
     if request.method == 'POST':
         try:
-            def roi_function(price, units_sold, total_cost):
-                ingresos = units_sold * price
-                ganancia_neta = ingresos - total_cost
-                return ganancia_neta / total_cost
-
-
-            def target_function(price):
-                return roi_function(price, units_sold, total_cost) - target_roi
-
-
-            # Usando el método de la secante para encontrar el precio óptimo
-            # Queremos un ROI del 30% (0.3)
+            # Se obtiene el ROI especificado
             roi =  float(request.POST.get('roi'))
             target_roi = roi / 100
 
@@ -38,6 +27,16 @@ def SaveSecante(request):
             # Propuestas iniciales de precios
             x0 = float(request.POST.get('p0'))
             x1 = float(request.POST.get('p1'))
+
+
+            def roi_function(price, units_sold, total_cost):
+                ingresos = units_sold * price
+                ganancia_neta = ingresos - total_cost
+                return ganancia_neta / total_cost
+
+
+            def target_function(price):
+                return roi_function(price, units_sold, total_cost) - target_roi
 
 
             precio_optimo, iteraciones = USecante.secant_method(target_function, x0, x1)
@@ -53,49 +52,44 @@ def SaveSecante(request):
 
             print(f"La cantidad de ventas necesarias son: {required_units_sold}", flush=True)
 
-            #precios = np.linspace(0, 3000, 500)
-            #roi = roi_function(precios)
+
+            print("--------------------------------\n")
+            print("Generando imagen")
 
 
-            # # Extraemos las iteraciones para graficar
-            # iter_precios, iter_rois = zip(*iteraciones)
+            # Gráfica del método de la secante
+            # Extraer las iteraciones en x e y
+            x_vals = [x1 for _, _, x1 in iteraciones]
+            y_vals = [target_function(x) for x in x_vals]
 
-            # # Creamos la gráfica
-            # plt.figure(figsize=(12, 8))
-            # plt.plot(precios, roi_values, label='ROI vs Precio', color='blue')
-            # plt.axvline(x=precio_optimo, color='red', linestyle='--', label=f'Precio Óptimo: ${precio_optimo:.2f}')
-            # plt.scatter(precio_optimo, ROI(precio_optimo), color='red')
+            plt.figure(figsize=(10, 6))
+            plt.plot(x_vals, y_vals, 'o-', label='Iteraciones')
+            plt.axhline(0, color='r', linestyle='--', label='ROI objetivo')
 
-            # # Graficamos las iteraciones
-            # plt.plot(iter_precios, iter_rois, 'o-', color='green', label='Iteraciones')
+            # Marcar el punto de convergencia
+            plt.scatter([precio_optimo], [target_function(precio_optimo)], color='g', zorder=5, label=f'Precio óptimo: ${precio_optimo:.2f}')
 
-            # # Añadimos etiquetas y título
-            # plt.title('Retorno de Inversión (ROI) en función del Precio con Iteraciones del Método de la Secante')
-            # plt.xlabel('Precio ($)')
-            # plt.ylabel('ROI')
-            # plt.legend()
-            # plt.grid(True)
-
-
+            plt.title('Convergencia del Método de la Secante')
+            plt.xlabel('Precio')
+            plt.ylabel('Función objetivo (f(p))')
+            plt.legend()
+            plt.grid(True)
 
             # Guardar la imagen en un objeto BytesIO
-            #buf = BytesIO()
-            #plt.savefig(buf, format='png')
-            #buf.seek(0)
-            #plt.close()
-            #print("Generando imagen")
+            buf = BytesIO()
+            plt.savefig(buf, format='png')
+            buf.seek(0)
+            plt.close()
 
-            # response = HttpResponse(buf.getvalue(), content_type='image/png;base64')
-            # response['Content-Disposition'] = 'attachment; filename="grafica.png"'
-
-            # return response
+            imagen = 'data:image/png;base64,' + base64.b64encode(buf.getvalue()).decode('utf-8')
 
             contexto = {
                 'costo'         : total_cost,
                 'precio_optimo' : f"{precio_optimo:.2f}",
                 'roi'           : roi,
                 'iteraciones'   : iteraciones,
-                'ventas'        : required_units_sold
+                'ventas'        : required_units_sold,
+                'imagen'        : imagen
             }
 
         except (ValueError, TypeError) as e:
