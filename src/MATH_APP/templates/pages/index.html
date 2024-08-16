@@ -41,7 +41,8 @@
             </p>
         </li>
         <li>
-            <strong><a href="{% url 'UserManual' %}">Manual de usuario</a>: Guía de usuario final</strong>
+            {% load static %}
+            <strong><a href="{%static 'Manual_Usuario_v1.pdf'%}">Manual de usuario</a>: Guía de usuario final</strong>
             <p>
                 Este apartado proporciona el acceso al manual de usuario que detalla cada una de las funcionalidades de este sistema.
             </p>
