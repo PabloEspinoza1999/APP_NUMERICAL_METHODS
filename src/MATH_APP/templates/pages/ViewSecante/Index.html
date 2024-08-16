@@ -23,8 +23,11 @@
         <p>El costo total de fabricación aproximado es de ${{ costo }}</p>
         <p>Se requieren {{ ventas }} ventas para poder alcanzar el ROI de {{ roi }}%</p>
         <br>
+
+        <h3>Iteraciones procesadas (ROIs)</h3>
+        <img src="{% static 'secante/formula_secante.png' %}" alt="ROI Funcion">
+        <br>
     
-        <label>A continuación, las iteraciones procesadas (ROIs):</label>
         <table class="table table-fluid text-white bordered">
             <thead>
                 <tr>
