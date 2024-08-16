@@ -15,30 +15,46 @@ def ShowSecante(request):
 def SaveSecante(request):
     if request.method == 'POST':
         try:
-            salario           = float(request.POST.get('salario_mensual'))
-            n_desarrolladores = float(request.POST.get('total_personal'))
-            horas_trabajo     = float(request.POST.get('horas_trabajo'))
-            costo_total       = n_desarrolladores * salario * (horas_trabajo / 160)
-
-            # Función del ROI
-            def ROI(p):
-                ingresos = p * ventas(p)
-                return (ingresos - costo_total) / costo_total
+            def roi_function(price, units_sold, total_cost):
+                ingresos = units_sold * price
+                ganancia_neta = ingresos - total_cost
+                return ganancia_neta / total_cost
 
 
-
-            p0, p1 = float(request.POST.get('p0')), float(request.POST.get('p1'))
-            precio_optimo, iteraciones = USecante.metodo_secante(ROI, p0, p1)
-            roi                        = f'{(ROI(precio_optimo) * -100):.2f}'
-            cantidad_ventas            = f"{ventas(precio_optimo):2f}"
+            def target_function(price):
+                return roi_function(price, units_sold, total_cost) - target_roi
 
 
-            print(f"El precio óptimo es: ${precio_optimo:.2f}", flush=True)
-            print(f"El ROI en este punto es: {roi}", flush=True)
-            print(f"La cantidad de ventas necesarias son: {cantidad_ventas}", flush=True)
+            # Usando el método de la secante para encontrar el precio óptimo
+            # Queremos un ROI del 30% (0.3)
+            roi =  float(request.POST.get('roi'))
+            target_roi = roi / 100
 
-            precios = np.linspace(0, 3000, 500)
-            roi_values = ROI(precios)
+            # Número de unidades esperadas a vender y costo total de desarrollo
+            units_sold = float(request.POST.get('unidades'))
+            total_cost = float(request.POST.get('costo_total'))
+
+
+            # Propuestas iniciales de precios
+            x0 = float(request.POST.get('p0'))
+            x1 = float(request.POST.get('p1'))
+
+
+            precio_optimo, iteraciones = USecante.secant_method(target_function, x0, x1)
+            required_units_sold = total_cost * (1 + target_roi) / precio_optimo
+
+            # Mostrar el precio óptimo
+            print(f"El precio óptimo que genera un ROI del { roi }%: ${precio_optimo:.2f}", flush=True)
+
+            # Mostrar la cantidad de iteraciones y los valores obtenidos en cada una
+            print("\nIteraciones del método de la secante:")
+            for i, val_x0, val_x1 in iteraciones:
+                print(f"Iteración {i}: x0 = {val_x0:.2f}, x1 = {val_x1:.2f}", flush=True)
+
+            print(f"La cantidad de ventas necesarias son: {required_units_sold}", flush=True)
+
+            #precios = np.linspace(0, 3000, 500)
+            #roi = roi_function(precios)
 
 
             # # Extraemos las iteraciones para graficar
@@ -63,11 +79,11 @@ def SaveSecante(request):
 
 
             # Guardar la imagen en un objeto BytesIO
-            buf = BytesIO()
-            plt.savefig(buf, format='png')
-            buf.seek(0)
-            plt.close()
-            print("Generando imagen")
+            #buf = BytesIO()
+            #plt.savefig(buf, format='png')
+            #buf.seek(0)
+            #plt.close()
+            #print("Generando imagen")
 
             # response = HttpResponse(buf.getvalue(), content_type='image/png;base64')
             # response['Content-Disposition'] = 'attachment; filename="grafica.png"'
@@ -75,23 +91,18 @@ def SaveSecante(request):
             # return response
 
             contexto = {
-                'costo': costo_total,
-                'precio_optimo': f"{precio_optimo:.2f}",
-                'roi': roi,
-                'iteraciones': iteraciones,
-                'ventas': cantidad_ventas
+                'costo'         : total_cost,
+                'precio_optimo' : f"{precio_optimo:.2f}",
+                'roi'           : roi,
+                'iteraciones'   : iteraciones,
+                'ventas'        : required_units_sold
             }
+
         except (ValueError, TypeError) as e:
             contexto = {
-                'error_message': f"Error en los datos de entrada: {str(e)}"
+                'error_message': f"Error en los datos de entrada: {e}"
             }
 
         return render(request, 'pages/ViewSecante/Index.html', contexto)
 
     return render(request, 'pages/ViewSecante/Index.html')
-
-
-# V0 corresponde a la cantida de iteraciones máxima
-# alpha Corresponde a la sensibilidad de las ventas
-def ventas(p, V0=10000, alpha=0.01):
-    return V0 * np.exp(-alpha * p)
