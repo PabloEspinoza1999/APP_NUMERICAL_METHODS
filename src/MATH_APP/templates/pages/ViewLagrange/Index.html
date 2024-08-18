@@ -3,6 +3,105 @@
 
 {% block contenido %}
 
-<a href="{% url 'downloadchartlagrange' %}"><i class="fas fa-home icon"></i> Descargar gráfico</a>
+<div class="card">
+<p>
+    Este informe calcula la cantidad máxima de producción posible (X) a un costo adicional óptimo (Y), teniendo en cuenta un presupuesto límite.
+</p>
+
+{% if  valor_x is not None %}
+<ol>
+    <i>
+        Costo de fabricación: {{ costo }}
+    </i>
+    <li>
+        Costo base constante: {{ costo_base }}
+    </li>
+    <li>
+        Restricción presupuesto: {{ presupuesto }}
+    </li>
+</ol>
+<br>
+
+
+<p>Número de productos máxioms para fabricar (x): {{ valor_x }}</p>
+<br>
+<p>Costo adicional óptimo y: {{ valor_y }}</p>
+<br>
+<p>Costo total de producción ${{ costo_total }}</p>
+
+
+<table class="table table-fluid text-white bordered">
+    <thead>
+        <tr>
+            <th>X</th>
+            <th>Y</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for iteracion in iteraciones %}
+        <tr>
+            <td>{{ iteracion.0 }}</td>
+            <td>{{ iteracion.1 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<img class="img" src="{{ imagen }}" alt="Gráfica procesada" />
+<br>
+
+
+
+{% endif %}
+
+<form method="post" action="{% url 'SaveSecante' %}">
+    {% csrf_token %}
+    <h2>Datos sobre el costo de fabricación.</h2>
+    <br/>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="costo_total">Presupuesto ($):</label>
+            <input type="number" class="form-control" id="costo_total" name="costo_total" required>
+            <small>Corresponde al presupuesto estimado disponible.</small>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="unidades">Costo por producto ($):</label>
+            <input type="number" class="form-control" id="unidades" name="unidades" required>
+            <small>Costo por fabricar una unidad.</small>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="roi">Costo Base ($):</label>
+            <input type="number" class="form-control" id="roi" name="roi" required>
+            <small>Costo adicional base que siempre se debe sumar a cada producto.</small>
+        </div>
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-success">Analizar</button>
+</form>
+
+
+
+{% if soluciones is not None %}
+
+    <table class="table table-fluid text-white bordered">
+        <thead style="color: black;">
+            <tr>
+                <th># Iteración</th>
+                <th>Precio calculado</th>
+            </tr>
+        </thead>
+        <tbody style="color: black;">
+            {% for iteracion in soluciones %}
+            <tr>
+                <td># {{ iteracion.0 }}</td>
+                <td>${{ iteracion.1 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
 
 {% endblock %}
