@@ -3,7 +3,7 @@
 
 {% block contenido %}
 
-<div class="card">
+<div class="card container-fluid">
 <p>
     Este informe calcula la cantidad máxima de producción posible (X) a un costo adicional óptimo (Y), teniendo en cuenta un presupuesto límite.
 </p>
@@ -20,8 +20,14 @@
         Restricción presupuesto: {{ presupuesto }}
     </li>
 </ol>
+
+<br>
+<p>
+    <a href="{% url 'langrange' %}" class="btn btn-primary">Realizar nuevo análsis</a>
+</p>
 <br>
 
+<h2>Función:</h2>
 <p>{{ funcion_lagrange }}</p>
 
 
@@ -52,11 +58,10 @@
 <br>
 <img class="img" src="{{ imagen }}" alt="Gráfica procesada" />
 <br>
-
-
-
 {% endif %}
 
+
+{% if  valor_x is None %}
 <form method="post" action="{% url 'saveLagrange' %}">
     {% csrf_token %}
     <h2>Datos sobre el costo de fabricación.</h2>
@@ -83,27 +88,8 @@
     <button type="submit" class="btn btn-success">Analizar</button>
 </form>
 
+{% endif %}
 
-
-{% if soluciones is not None %}
-
-    <table class="table table-fluid text-white bordered">
-        <thead style="color: black;">
-            <tr>
-                <th># Iteración</th>
-                <th>Precio calculado</th>
-            </tr>
-        </thead>
-        <tbody style="color: black;">
-            {% for iteracion in soluciones %}
-            <tr>
-                <td># {{ iteracion.0 }}</td>
-                <td>${{ iteracion.1 }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
 </div>
 
 {% endblock %}
