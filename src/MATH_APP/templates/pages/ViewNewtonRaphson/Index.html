@@ -250,7 +250,7 @@
                     <details>
                         <summary style="font-size: 1.3rem; font-weight: bold;">Gráfica</summary> <!-- Tamaño de fuente mayor -->
                         <div class="mt-4">
-                            <h3 style="font-size: 1.5rem;">Gráfica de Interpolación de Newton</h3> <!-- Tamaño de fuente mayor -->
+                            <h3 style="font-size: 1.5rem;">Gráfica de Newton</h3> <!-- Tamaño de fuente mayor -->
                             <img src="{{ plot_image }}" alt="Newton" style="width: 100%; max-width: 800px; height: auto;"> <!-- Imagen más grande -->
                             <a href="{{ plot_image }}" download="Newton.png" class="btn btn-primary mt-3">Descargar Imagen</a> <!-- Botón para descargar -->
                         </div>
@@ -266,26 +266,33 @@
                             {% endif %}
                         
                             {% if Ruta %}
-                                <label class="d-block mb-2">Tiempo Óptimo:</label>
-                                <div class="table-container mb-4">
-                                    <table class="table table-striped">
-                                        <thead class="thead-light">
+                            <label class="d-block mb-2">Tiempo Óptimo:</label>
+                            <div class="table-container mb-4">
+                                <table class="table table-striped">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Iteración</th>
+                                            <th>Operaciones Realizadas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for punto in Ruta %}
                                             <tr>
-                                                <th>Iteración</th>
-                                                <th>Valor</th>
+                                                <td>{{ punto.iteracion }}</td>
+                                                <td>
+                                                    <ul>
+                                                        {% for operacion in punto.detalle %}
+                                                            <li>{{ operacion }}</li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for punto in Ruta %}
-                                                <tr>
-                                                    <td>{{ forloop.counter }}</td> 
-                                                    <td>{{ punto.valor }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+                        
                         </div>
                         
                     </details>

@@ -12,36 +12,35 @@
     <p>En el menú izquierdo encontrarás las siguientes opciones:</p>
     <ol>
         <li>
-            <strong><a href="{% url 'ShowNewtonRaphson' %}">Retención de clientes con descuentos óptimos:</a></strong>
+            <strong><a href="{% url 'ShowNewtonRaphson' %}">Optimización del tiempo de respuesta al cliente:</a></strong>
             <p>
-                Este informe ejecuta un algoritmo basado en Newton Raphson para encontrar el descuento más óptimo para un producto
-                con el que pretendas retener clientes.
+                Este informe ejecuta un algoritmo basado en Newton Raphson para encontrar el tiempo óptimo de respuesta 
+                que el personal de call center debería cumplir, para mejorar el uso de los recursos utilizados y la imagen de la empresa.
             </p>
         </li>
         <li>
-            <strong><a href="{% url 'ShowSecante' %}">Tiempo óptimo de producción para la fabricación de productos:</a></strong>
+            <strong><a href="{% url 'ShowSecante' %}">Precio óptimo para obtener el mejor ROI:</a></strong>
             <p>
-                Este informe permite obtener el mejor tiempo de producción en horas mediante el método de Secante, esto para optimizar el esfuerzo
-                en tiempo del personal disponible en tu organización.
+                Este informe permite obtener el mejor precio para vender un producto y obtener el mejor Retorno de Inversión en el lapso de 12 meses.
             </p>
         </li>
         <li>
-            <strong><a href="#">Proyección soporte al cliente:</a></strong>
+            <strong><a href="#">Precio óptimo con mejor satisfacción del cliente:</a></strong>
             <p>
                 Este informe muestra una proyección de casos abiertos y resueltos sobre solicitudes de clientes, además proyecta el tiempo promedio
                 en un lapzo para tomar decisiones sobre el personal que atiende a los clientes de una empresa, dicho informe ejecuta un algoritmo
                 basado en Polinomios de Newton. 
             </p>
         </li>
-        <li> 
-            <strong><a href="{% url 'langrange' %}">Proyección de satisfacción al cliente:</a></strong>
+        <li>
+            <strong><a href="{% url 'langrange' %}">Optimización del costo de producción:</a></strong>
             <p>
-                Este informe calcula una proyección de satisfacción a cliente mediante un algoritmo basado en Lagrange, según el histórico de datos
-                que se proporcione realizará una proyeccioń en caso de que algún factor como los precios de un producto, tratamiento al cliente y demás se mantuviera.</s>.
+                Este informe calcula el costo de producción mínimo de producción posible, teniendo en cuenta un presupuesto límite que se cuenta.
             </p>
         </li>
         <li>
-            <strong><a href="{% url 'UserManual' %}">Manual de usuario</a>: Guía de usuario final</strong>
+            {% load static %}
+            <strong><a href="{%static 'Manual_Usuario_v1.pdf'%}">Manual de usuario</a>: Guía de usuario final</strong>
             <p>
                 Este apartado proporciona el acceso al manual de usuario que detalla cada una de las funcionalidades de este sistema.
             </p>
