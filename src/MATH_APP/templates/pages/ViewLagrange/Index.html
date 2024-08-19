@@ -10,7 +10,7 @@
 
 {% if  valor_x is not None %}
 <ol>
-    <i>
+    <li>
         Costo de fabricación: {{ costo }}
     </i>
     <li>
@@ -22,8 +22,10 @@
 </ol>
 <br>
 
+<p>{{ funcion_lagrange }}</p>
 
-<p>Número de productos máxioms para fabricar (x): {{ valor_x }}</p>
+
+<p>Número de productos máximos para fabricar (x): {{ valor_x }}</p>
 <br>
 <p>Costo adicional óptimo y: {{ valor_y }}</p>
 <br>
@@ -55,24 +57,24 @@
 
 {% endif %}
 
-<form method="post" action="{% url 'SaveSecante' %}">
+<form method="post" action="{% url 'saveLagrange' %}">
     {% csrf_token %}
     <h2>Datos sobre el costo de fabricación.</h2>
     <br/>
     <div class="form-row">
         <div class="form-group col-md-6">
-            <label for="costo_total">Presupuesto ($):</label>
-            <input type="number" class="form-control" id="costo_total" name="costo_total" required>
+            <label for="presupuesto">Presupuesto ($):</label>
+            <input type="number" class="form-control" id="presupuesto" name="presupuesto" required>
             <small>Corresponde al presupuesto estimado disponible.</small>
         </div>
         <div class="form-group col-md-6">
-            <label for="unidades">Costo por producto ($):</label>
-            <input type="number" class="form-control" id="unidades" name="unidades" required>
+            <label for="costo">Costo por producto ($):</label>
+            <input type="number" class="form-control" id="costo" name="costo" required>
             <small>Costo por fabricar una unidad.</small>
         </div>
         <div class="form-group col-md-6">
-            <label for="roi">Costo Base ($):</label>
-            <input type="number" class="form-control" id="roi" name="roi" required>
+            <label for="costo_base">Costo Base ($):</label>
+            <input type="number" class="form-control" id="costo_base" name="costo_base" required>
             <small>Costo adicional base que siempre se debe sumar a cada producto.</small>
         </div>
     </div>
