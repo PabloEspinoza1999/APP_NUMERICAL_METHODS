@@ -1,6 +1,5 @@
 from ..Utils import UNewton
 from datetime import datetime
-from datetime import datetime
 from django.shortcuts import redirect, render
 from ..Data.Cliente_Newton import Cliente_NewtonData
 import pandas as pd
