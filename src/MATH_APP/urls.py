@@ -3,7 +3,6 @@ from .Controllers import NewtonController,SecanteController,PolinomioNewtonContr
 
 urlpatterns = [
     path('',                  NewtonController.Index,             name='Index'             ),
-    path('UserManual',        NewtonController.UserManual,        name='UserManual'        ),
     path('SaveClient',        NewtonController.SaveClient,        name='SaveClient'        ),
     path('Deleteclient/<int:id>/',NewtonController.Deleteclient,      name='Deleteclient'  ),
     path('ShowNewtonRaphson', NewtonController.ShowNewtonRaphson, name='ShowNewtonRaphson' ),
