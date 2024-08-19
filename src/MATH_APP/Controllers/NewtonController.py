@@ -1,16 +1,22 @@
 from ..Utils import UNewton
 from datetime import datetime
-import base64
-from datetime import datetime
 from django.shortcuts import redirect, render
 from ..Data.Cliente_Newton import Cliente_NewtonData
+import pandas as pd
+from django.http import JsonResponse
+from io import BytesIO
+from ..Data.Cliente_Newton import Cliente_Newton
+
+
 Cliente_data = Cliente_NewtonData()
 
 def Index(request):
     return render(request, 'pages/index.html')
 
+
 def UserManual(request):
     return render(request, 'pages/UserManual/Index.html')
+
 
 def ShowNewtonRaphson(request):
     try:
@@ -27,6 +33,7 @@ def ShowNewtonRaphson(request):
 
     except Exception as e:
         return render(request, 'pages/ViewNewtonRaphson/Index.html', {'error_message': str(e)})
+
 
 def SaveNewtonRaphson(request):
     try:
@@ -63,13 +70,8 @@ def SaveClient(request):
             cliente_data_dict = {
                 'nombre_cliente': request.POST['nombre_cliente'],
                 'tiempo_respuesta': float(request.POST['tiempo_respuesta']),
-                'fecha_registro': request.POST['fecha_registro'],  
                 'correo': request.POST['correo'],
                 'telefono': request.POST['telefono'],
-                'direccion': request.POST['direccion'],
-                'tipo_cliente': request.POST['tipo_cliente'],
-                'estado_cuenta': request.POST['estado_cuenta'],
-                'preferencias': request.POST['preferencias'],
                 'comentarios': request.POST.get('comentarios', '') 
             }
 
@@ -97,3 +99,32 @@ def Deleteclient(request, id):
             return render(request, 'pages/ViewNewtonRaphson/Index.html', {'error_message': str(e)})
     else:
         return redirect('ShowNewtonRaphson')  
+    
+
+def import_clients(request):
+
+    if request.method == 'POST':
+        print('--------------------- Importando usuarios')
+        print(request.FILES["listaclientes"], flush=True)
+        
+        file = request.FILES["listaclientes"]
+
+        # Read the Excel file into a DataFrame
+        df = pd.read_excel(BytesIO(file.read()))
+
+        # For demonstration, return the first few rows as JSON
+        data = df.head().to_dict(orient='records')
+
+        processed_data = []
+
+        for index, row in df.iterrows():
+            row_data = row.to_dict()
+            cliente = Cliente_Newton(row_data['id'], row_data['cliente'], row_data['tiempo espera'], datetime.now(), row_data['correo'], row_data['telefono'], row_data['comentarios'])
+            processed_data.append(cliente)
+
+        Cliente_data.upate_clientes(processed_data)
+
+        return JsonResponse({'message': '¡Datos han sido impotados!'}, status=200)
+
+    else:
+        return redirect('ShowNewtonRaphson')

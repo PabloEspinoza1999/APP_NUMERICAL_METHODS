@@ -57,6 +57,7 @@ def newton_raphson_optimize_cost(Tiempos, lambda_param=0.1, tol=1e-10, max_iter=
 
     return T, plot_image_data, Ruta
 
+
 def  bitacora(i,T,f_T,f_prime_T,T_new):
       return  [
           f"Iteración: { i + 1 }",

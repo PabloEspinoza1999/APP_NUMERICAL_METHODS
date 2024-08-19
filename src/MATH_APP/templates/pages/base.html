@@ -5,14 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block titulo %}{% endblock %}</title>
+    <title>{% block titulo %}{% endblock %} | Informes con Mate</title>
     <!-- Stylesheets -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/app.css' %}">
 </head>
 <body>
@@ -30,7 +29,7 @@
         </div>
         <div class="main-content">
             <div class="header">
-                <h1>Generador de informes</h1>
+                <h1>Elabora informes empresariales | Informes con Mate</h1>
             </div>
             <div class="content" style="display: flex; justify-content: center; align-items: center;">
                 {% block contenido %}{% endblock %}        
@@ -52,9 +51,6 @@
         <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
-        <script src="{% static 'Charts/chartsNewtonR.js' %}"></script>
-        <script src="{% static 'js/datatables.js' %}"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
         {% if plot_image %}
