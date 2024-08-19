@@ -1,9 +1,13 @@
 from ..Utils import UNewton
 from datetime import datetime
-import base64
 from datetime import datetime
 from django.shortcuts import redirect, render
 from ..Data.Cliente_Newton import Cliente_NewtonData
+import pandas as pd
+from django.http import JsonResponse
+from io import BytesIO
+
+
 Cliente_data = Cliente_NewtonData()
 
 def Index(request):
@@ -95,5 +99,27 @@ def Deleteclient(request, id):
             return redirect('ShowNewtonRaphson') 
         except Exception as e:
             return render(request, 'pages/ViewNewtonRaphson/Index.html', {'error_message': str(e)})
+    else:
+        return redirect('ShowNewtonRaphson')  
+    
+
+def import_clients(request):
+
+    if request.method == 'POST':
+        print('--------------------- Importando usuarios')
+        print(request.FILES["listaclientes"], flush=True)
+        
+        file = request.FILES["listaclientes"]
+
+        # Read the Excel file into a DataFrame
+        df = pd.read_excel(BytesIO(file.read()))
+
+        # For demonstration, return the first few rows as JSON
+        data = df.head().to_dict(orient='records')
+
+        print(data, flush=True)
+
+        return JsonResponse({'message': '¡Datos han sido impotados!'}, status=200)
+
     else:
         return redirect('ShowNewtonRaphson')  
