@@ -9,9 +9,17 @@
             <p>Utiliza nuestra herramienta de interpolación para identificar el precio óptimo que maximiza la satisfacción de tus clientes basándote en los datos que ingreses.</p>
            
             <div class="mb-3">
-                <button disabled type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAgregar">
-                    Agregar Clientes
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" id="csrfmiddlewaretoken">
+                <input class="form form-row" type="file" name="listaclientes" id="listaclientes" alt="Importar clientes" accept=".xls, .xlsx" >
+                <br>
+                <button type="button" class="btn btn-success" onclick="uploadExcel()">
+                    Importar EXCEL
                 </button>
+
+                <button type="button" class="btn btn-success" onclick="clearclients()">
+                    Limpiar
+                </button>
+
                 <a href="{% url 'SavePolinomioNewton' %}" class="btn btn-primary ml-2">Realizar Análisis de datos</a>
                
                 {% if tabla %}
@@ -238,5 +246,70 @@
         </div>
     </div>
 </div>
+
+
+
+<script>
+    async function uploadExcel() {
+        const URL = "/uploadclientspolinomio";
+        const fileInput = document.getElementById('listaclientes');
+        const file = fileInput.files[0]; // Get the selected file
+        const csrfmiddlewaretoken = document.getElementById('csrfmiddlewaretoken');
+
+        if (!file) {
+            alert('Por favor seleccione un archivo de hoja de cálculo (EXCEL)');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('listaclientes', file);
+        formData.append('csrfmiddlewaretoken', csrfmiddlewaretoken.value)
+
+        fetch(URL, { // Replace with your server endpoint
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('No se ha logrado cargar el archivo, por favor revisar.');
+            }
+        })
+        .then(data => {
+            console.log(data.message);
+            alert(data.message);
+            window.location.href = "ShowPolinomioNewton";
+
+        })
+        .catch(error => {
+            console.error('Error uploading file:', error);
+            alert('Error uploading file');
+        });
+
+    }
+
+    async function clearclients() {
+        const URL = '/cleanclientsplinomio'
+        fetch(URL).
+        then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('No se ha logrado cargar el archivo, por favor revisar.');
+            }
+        })
+        .then(data => {
+            console.log(data.message);
+            alert(data.message);
+            window.location.href = "ShowPolinomioNewton";
+        })
+        .catch(error => {
+            console.error('Error al limpiar datos:', error);
+            alert('Error al limpiar datos');
+        });
+    }
+
+</script>
 
 {% endblock %}

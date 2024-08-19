@@ -1,9 +1,12 @@
-import base64
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from ..Utils import UPolinomioNewton
-from ..Data.Cliente_Polinomio import Cliente_PolinomioData
+from datetime import datetime
+from ..Data.Cliente_Polinomio import Cliente_PolinomioData, Cliente_Polinomio
 import numpy as np
 from django.http import JsonResponse
+from io import BytesIO
+import pandas as pd
+
 Cliente_data = Cliente_PolinomioData()
 
 def ShowPolinomioNewton(request):
@@ -53,3 +56,36 @@ def SavePolinomioNewton(request):
             'lista_cliente': Cliente_data.get_all_clientes(), 
         }
         return render(request, 'pages/ViewPolinomioNewton/Index.html', contexto)
+    
+
+
+def import_clients(request):
+
+    if request.method == 'POST':
+        print('--------------------- Importando usuarios')
+        print(request.FILES["listaclientes"], flush=True)
+        
+        file = request.FILES["listaclientes"]
+
+        # Read the Excel file into a DataFrame
+        df = pd.read_excel(BytesIO(file.read()))
+
+        processed_data = []
+
+        for index, row in df.iterrows():
+            row_data = row.to_dict()
+            cliente = Cliente_Polinomio(row_data['id'], row_data['cliente'], row_data['precio'], row_data['satisfaccion'])
+            processed_data.append(cliente)
+
+        Cliente_data.upate_clientes(processed_data)
+
+        return JsonResponse({'message': '¡Datos han sido impotados!'}, status=200)
+
+    else:
+        return redirect('ShowPolinomioNewton')
+
+
+def clean(request):
+    Cliente_data.clean()
+    return JsonResponse({'message': '¡Datos han sido limpiados!'}, status=200)
+
