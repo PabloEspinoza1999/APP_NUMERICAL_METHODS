@@ -6,6 +6,7 @@ from ..Data.Cliente_Newton import Cliente_NewtonData
 import pandas as pd
 from django.http import JsonResponse
 from io import BytesIO
+from ..Data.Cliente_Newton import Cliente_Newton
 
 
 Cliente_data = Cliente_NewtonData()
@@ -13,8 +14,10 @@ Cliente_data = Cliente_NewtonData()
 def Index(request):
     return render(request, 'pages/index.html')
 
+
 def UserManual(request):
     return render(request, 'pages/UserManual/Index.html')
+
 
 def ShowNewtonRaphson(request):
     try:
@@ -31,6 +34,7 @@ def ShowNewtonRaphson(request):
 
     except Exception as e:
         return render(request, 'pages/ViewNewtonRaphson/Index.html', {'error_message': str(e)})
+
 
 def SaveNewtonRaphson(request):
     try:
@@ -117,9 +121,16 @@ def import_clients(request):
         # For demonstration, return the first few rows as JSON
         data = df.head().to_dict(orient='records')
 
-        print(data, flush=True)
+        processed_data = []
+
+        for index, row in df.iterrows():
+            row_data = row.to_dict()
+            cliente = Cliente_Newton(row_data['id'], row_data['cliente'], row_data['tiempo espera'], datetime.now(), row_data['correo'], row_data['telefono'], row_data['comentarios'])
+            processed_data.append(cliente)
+
+        Cliente_data.upate_clientes(processed_data)
 
         return JsonResponse({'message': '¡Datos han sido impotados!'}, status=200)
 
     else:
-        return redirect('ShowNewtonRaphson')  
+        return redirect('ShowNewtonRaphson')

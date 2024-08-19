@@ -23,10 +23,6 @@
                 </button>
 
                 <br>
-
-                <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#modalAgregar">
-                    Agregar Registro
-                </button>
                 <a href="{% url 'SaveNewtonRaphson' %}" class="btn btn-primary ml-2 mt-3">Realizar Análisis de datos</a>
                 
                 {% if plot_image %}
@@ -332,8 +328,10 @@
             }
         })
         .then(data => {
-            console.log('File uploaded successfully:', data);
-            alert('File uploaded successfully!');
+            console.log(data.message);
+            alert(data.message);
+            window.location.href = "ShowNewtonRaphson";
+
         })
         .catch(error => {
             console.error('Error uploading file:', error);
