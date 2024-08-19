@@ -71,13 +71,8 @@ def SaveClient(request):
             cliente_data_dict = {
                 'nombre_cliente': request.POST['nombre_cliente'],
                 'tiempo_respuesta': float(request.POST['tiempo_respuesta']),
-                'fecha_registro': request.POST['fecha_registro'],  
                 'correo': request.POST['correo'],
                 'telefono': request.POST['telefono'],
-                'direccion': request.POST['direccion'],
-                'tipo_cliente': request.POST['tipo_cliente'],
-                'estado_cuenta': request.POST['estado_cuenta'],
-                'preferencias': request.POST['preferencias'],
                 'comentarios': request.POST.get('comentarios', '') 
             }
 
