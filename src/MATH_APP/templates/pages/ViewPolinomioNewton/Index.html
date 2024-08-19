@@ -5,71 +5,63 @@
 <div class="container">
     <div class="row">
         <div class="m-3">
-            
-            <h5>Encuentra el Precio óptimo que los clientes hayan tenido una mejor satisfacción</h5>
-            <p>Utiliza nuestra herramienta de interpolación para identificar el precio óptimo que maximiza la satisfacción de tus clientes, este algoritmo se basa en los datos que importes al sistema.</p>
+            <h5>Encuentra el Precio Ideal para Satisfacer a tus Clientes</h5>
+            <p>Utiliza nuestra herramienta de interpolación para identificar el precio óptimo que maximiza la satisfacción de tus clientes basándote en los datos que ingreses.</p>
            
             <div class="mb-3">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAgregar">
+                <button disabled type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAgregar">
                     Agregar Clientes
                 </button>
                 <a href="{% url 'SavePolinomioNewton' %}" class="btn btn-primary ml-2">Realizar Análisis de datos</a>
                
-                {% if plot_image %}
+                {% if tabla %}
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalRequest">
                     Ver Resultados Análisis 
                 </button>
                 {% endif %}
             </div>
 
-            
-            <div class="form-group col-md-6">
-                <label for="producto">Nombre del producto:</label>
-                <input type="text" class="form-control" id="producto" name="producto">
-            </div>
-            
-            <h3 class="mb-4"><strong>Calificaciones</strong></h3>
-            <table id="clientesTable" class="display">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Precio</th>
-                        <th>Nivel de Satisfacción</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if lista_cliente %}
-                        {% for cliente in lista_cliente %}
+            {% if lista_cliente %}
+                <div class="table-responsive">
+                    <table id="clientesTable" class="table table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ cliente.id }}</td>
-                                <td>{{ cliente.nombre_cliente }}</td>
-                                <td>{{ cliente.precio }}</td>
-                                <td>{{ cliente.satisfaccion_cliente }}</td>
-                                <td>
-                                    <button 
-                                        type="button" 
-                                        class="btn btn-success" 
-                                        data-toggle="modal" 
-                                        data-target="#modalEditar{{ cliente.id }}" 
-                                        data-id="{{ cliente.id }}" 
-                                        data-nombre="{{ cliente.nombre_cliente }}" 
-                                        data-precio="{{ cliente.precio }}" 
-                                        data-satisfaccion="{{ cliente.satisfaccion_cliente }}"
-                                    >
-                                        Detalle
-                                    </button>
-                                </td>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Precio</th>
+                                <th>Nivel de Satisfacción</th>
+                                <th>Acciones</th>
                             </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="6">No hay datos disponibles.</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            {% for cliente in lista_cliente %}
+                                <tr>
+                                    <td>{{ cliente.id }}</td>
+                                    <td>{{ cliente.nombre_cliente }}</td>
+                                    <td>{{ cliente.precio }}</td>
+                                    <td>{{ cliente.satisfaccion_cliente }}</td>
+                                    <td>
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-success" 
+                                            data-toggle="modal" 
+                                            data-target="#modalEditar{{ cliente.id }}" 
+                                            data-id="{{ cliente.id }}" 
+                                            data-nombre="{{ cliente.nombre_cliente }}" 
+                                            data-precio="{{ cliente.precio }}" 
+                                            data-satisfaccion="{{ cliente.satisfaccion_cliente }}"
+                                        >
+                                            Detalle
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>No hay clientes disponibles.</p>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -149,10 +141,10 @@
 
 <!-- Modal Ver Resultados Análisis -->
 <div id="modalRequest" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document"> <!-- Aumenta el tamaño del modal -->
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-light">
-                <h5 class="modal-title" style="color: black; font-size: 1.5rem;">Análisis</h5> <!-- Tamaño de fuente mayor -->
+                <h5 class="modal-title" style="color: black; font-size: 1.5rem;">Análisis</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -160,50 +152,91 @@
             <div class="modal-body" style="color: black; font-size: 1.1rem;">
                 <div class="detalle-analisis">
                     <details>
-                        <summary style="font-size: 1.3rem; font-weight: bold;">Gráfica</summary> <!-- Tamaño de fuente mayor -->
+                        <summary style="font-size: 1.3rem; font-weight: bold;">Resultados</summary>
                         <div class="mt-4">
-                            <h3 style="font-size: 1.5rem;">Gráfica de Interpolación de Newton</h3> <!-- Tamaño de fuente mayor -->
-                            <img src="{{ plot_image }}" alt="Gráfica de Interpolación de Newton" style="width: 100%; max-width: 800px; height: auto;"> <!-- Imagen más grande -->
-                            <a href="{{ plot_image }}" download="interpolacion_newton.png" class="btn btn-primary mt-3">Descargar Imagen</a> <!-- Botón para descargar -->
-                        </div>
-                    </details>
-                    <br>
-                    <details>
-                        <summary style="font-size: 1.3rem; font-weight: bold;">Proceso</summary> <!-- Tamaño de fuente mayor -->
-                        <div class="mt-4">
-                            {% if error_message %}
-                                <div class="alert alert-danger" role="alert">
-                                    Ha ocurrido un problema: {{ error_message }}
-                                </div>
-                            {% endif %}
-                        
-                            {% if Ruta %}
-                                <label class="d-block mb-2">Precio Óptimo para cliente:</label>
-                                <div class="table-container mb-4">
+                            {% if tabla %}
+                                <label class="d-block mb-2">Tabla de Diferencias Divididas:</label>
+                                <div class="table-responsive mb-4">
                                     <table class="table table-striped">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>Iteración</th>
-                                                <th>Valor</th>
+                                                {% with tabla|first as first_row %}
+                                                    {% for value in first_row %}
+                                                        <th>D{{ forloop.counter0 }}</th>
+                                                    {% endfor %}
+                                                {% endwith %}
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for punto in Ruta %}
+                                            {% for row in tabla %}
                                                 <tr>
-                                                    <td>{{ forloop.counter }}</td> 
-                                                    <td>{{ punto.valor }}</td>
+                                                    {% for value in row %}
+                                                        <td>{{ value }}</td>
+                                                    {% endfor %}
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
+                                {% if precio_optimo and max_satisfaccion %}
+                                <div class="mt-4">
+                                    <p><strong>Precio Óptimo:</strong> {{ precio_optimo }}</p>
+                                    <p><strong>Satisfacción Máxima:</strong> {{ max_satisfaccion }}</p>
+                                </div>
+                                {% else %}
+                                <p>No se han calculado los resultados aún.</p>
+                                {% endif %}
+                            {% else %}
+                                <p>No se han generado resultados aún.</p>
                             {% endif %}
                         </div>
-                        
+                    </details>
+
+                    <details>
+                        <summary style="font-size: 1.3rem; font-weight: bold;">Gráfica</summary>
+                        <div class="mt-4">
+                            <div class="img-container">
+                                <img src="data:image/png;base64,{{ imagen_grafico }}" alt="Gráfico del Polinomio Interpolador" class="img-fluid">
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <!-- Tabla de Operaciones -->
+                    <details>
+                        <summary style="font-size: 1.3rem; font-weight: bold;">Operaciones Realizadas</summary>
+                        <div class="mt-4">
+                            {% if operaciones %}
+                                <label class="d-block mb-2">Operaciones Realizadas:</label>
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-striped">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Iteración</th>
+                                                <th>Operación</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for operacion in operaciones %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ operacion }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p>No se han realizado operaciones aún.</p>
+                            {% endif %}
+                        </div>
                     </details>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

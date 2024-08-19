@@ -17,13 +17,16 @@ def newton_raphson_optimize_cost(Tiempos, lambda_param=0.1, tol=1e-10, max_iter=
     
     T = T_prom
     Ruta = []  
-    
+
     for i in range(max_iter):
         f_T = cost_derivative(T)
         f_prime_T = cost_second_derivative(T)
         T_new = T - f_T / f_prime_T
-        
-        Ruta.append({'iteracion': i + 1, 'valor': T})
+
+        Ruta.append({
+            'iteracion': T_new,
+            'detalle': bitacora(i,T,f_T,f_prime_T,T_new)
+        })
         if abs(T_new - T) < tol:
             break
         
@@ -53,3 +56,15 @@ def newton_raphson_optimize_cost(Tiempos, lambda_param=0.1, tol=1e-10, max_iter=
     plot_image_data = generate_plot_image()
 
     return T, plot_image_data, Ruta
+
+
+def  bitacora(i,T,f_T,f_prime_T,T_new):
+      return  [
+          f"Iteración: { i + 1 }",
+          f"Valor actual de Tiempo Actual (T): {T:.6f}",
+          f"Función de costo(C): {f_T:.6f}",
+          f"Derivada de la función de costo(C') : {f_prime_T:.6f}",
+          f"Fórmula para calcular Nuevo Tiempo: Nt = T - C / C'",
+          f"Cálculo específico: {T:.6f} - {f_T:.6f} / {f_prime_T:.6f}",
+          f"Nuevo valor calculado de Nt: {T_new:.6f}"
+        ]
