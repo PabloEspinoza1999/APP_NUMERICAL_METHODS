@@ -59,3 +59,7 @@ class Cliente_NewtonData:
                 self.clientes.remove(cliente)
                 return cliente
         return None
+
+
+    def clean(self):
+        self.clientes = []

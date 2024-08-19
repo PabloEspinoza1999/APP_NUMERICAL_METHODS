@@ -22,7 +22,7 @@
                     Importar EXCEL
                 </button>
 
-                <button type="button" class="btn btn-success" onclick="uploadExcel()">
+                <button type="button" class="btn btn-success" onclick="clearclients()">
                     Limpiar
                 </button>
 
@@ -289,6 +289,27 @@
             alert('Error uploading file');
         });
 
+    }
+
+    async function clearclients() {
+        const URL = '/cleanclients'
+        fetch(URL).
+        then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('No se ha logrado cargar el archivo, por favor revisar.');
+            }
+        })
+        .then(data => {
+            console.log(data.message);
+            alert(data.message);
+            window.location.href = "ShowNewtonRaphson";
+        })
+        .catch(error => {
+            console.error('Error al limpiar datos:', error);
+            alert('Error al limpiar datos');
+        });
     }
 
 </script>

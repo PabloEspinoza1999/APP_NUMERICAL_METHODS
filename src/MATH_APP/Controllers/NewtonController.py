@@ -128,3 +128,9 @@ def import_clients(request):
 
     else:
         return redirect('ShowNewtonRaphson')
+
+
+def clean(request):
+    Cliente_data.clean()
+    return JsonResponse({'message': '¡Datos han sido limpiados!'}, status=200)
+

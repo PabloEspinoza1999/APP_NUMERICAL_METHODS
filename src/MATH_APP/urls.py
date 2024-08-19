@@ -14,6 +14,6 @@ urlpatterns = [
     path('downloadchartlagrange',  LagrangeController.DownloadChart,              name='downloadchartlagrange' ),
     path('langrange',              LagrangeController.Index,                      name='langrange'             ),
     path('saveLagrange',           LagrangeController.calculate,                  name='saveLagrange'          ),
-    path('uploadclients',          NewtonController.import_clients,               name='uploadclients'          ),
+    path('uploadclients',          NewtonController.import_clients,               name='uploadclients'         ),
+    path('cleanclients',           NewtonController.clean,                        name='cleanclients'          ),
 ]
-
